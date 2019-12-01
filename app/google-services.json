@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "252852080033",
+    "firebase_url": "https://findrecipe-a4f88.firebaseio.com",
+    "project_id": "findrecipe-a4f88",
+    "storage_bucket": "findrecipe-a4f88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252852080033:android:ddc1395053a9b3d32a4fe0",
+        "android_client_info": {
+          "package_name": "com.dustedduke.findrecipe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252852080033-akt9edq3oo5sgg0oh05qd8nfvtbq2m00.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dustedduke.findrecipe",
+            "certificate_hash": "f27149655a68e686d1ceb3e1683a594305d235bc"
+          }
+        },
+        {
+          "client_id": "252852080033-goc1tipdffn8pgq3v4nl7cdii6hvjatu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4xab5K3heyjmj-qhzMyIiQ3gIy31VSj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252852080033-goc1tipdffn8pgq3v4nl7cdii6hvjatu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
