@@ -2,10 +2,7 @@ package com.dustedduke.findrecipe
 
 import androidx.recyclerview.widget.DiffUtil
 
-/**
- * Created by Anatoliy Lukyanov on 09/03/2019.
- *
- */
+
 class RecipeDiffUtilCallback(
     private val oldList: List<Recipe>,
     private val newList: List<Recipe>

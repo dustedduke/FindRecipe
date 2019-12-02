@@ -1,5 +1,7 @@
 package com.dustedduke.findrecipe
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +10,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.dustedduke.findrecipe.ui.RecipeDescription
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.google.firebase.storage.FirebaseStorage
 
 
 //class RecipeAdapter(): FirestoreRecyclerAdapter<Recipe, RecipeAdapter.RecipeViewHolder>() {
@@ -59,8 +65,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     private val recipes = emptyList<Recipe>().toMutableList()
+    private val storageRef = FirebaseStorage.getInstance().reference
 
     inner class RecipeViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        var itemId = ""
         var itemImage: ImageView
         var itemTitle: TextView
         var itemDescription: TextView
@@ -69,6 +77,16 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
             itemImage = itemView.findViewById(R.id.recipeImageView)
             itemTitle = itemView.findViewById(R.id.recipeTitleView)
             itemDescription = itemView.findViewById(R.id.recipeDescriptionView)
+
+            itemView.setOnClickListener {
+
+                Log.d("RECIPE ID: ", itemId)
+
+                val intent = Intent(itemView.context, RecipeDescription::class.java)
+                intent.putExtra("recipeId", itemId)
+                itemView.context.startActivity(intent)
+            }
+
         }
 
     }
@@ -97,6 +115,17 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
         var recipe: Recipe = recipes.get(position)
 
         //holder.itemImage.setImageURI(recipe.image)
+        Log.d("STORAGE URL: ", recipe.image)
+
+        Glide.with(holder.itemView)
+            .load(recipe.image)
+            .placeholder(R.drawable.ic_baseline_remove) // TODO  Можно loading spinner
+            .error(R.drawable.ic_camera)
+            .fallback(R.drawable.ic_baseline_remove)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .into(holder.itemImage)
+
+        holder.itemId = recipe.id
         holder.itemTitle.setText(recipe.title)
         holder.itemDescription.setText(recipe.description)
 

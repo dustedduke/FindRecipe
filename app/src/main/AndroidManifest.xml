@@ -18,8 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".RecipeDescriptionEdit"
+            android:label="@string/title_activity_recipe_description_edit"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ui.RecipeDescription"
+            android:label="@string/title_activity_recipe_description"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".LoggedInActivity"
-            android:label="@string/title_activity_register"></activity>
+            android:label="@string/title_activity_register" />
         <activity
             android:name=".MainActivity"
             android:icon="@drawable/logo">
