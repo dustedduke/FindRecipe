@@ -1,5 +1,6 @@
 package com.dustedduke.findrecipe
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,12 +14,16 @@ import io.reactivex.subjects.BehaviorSubject
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
+import java.io.File
 
 
 class RecipeRepository {
 
     companion object {
         private const val RECIPES_COLLECTION = "recipes"
+        private const val RECIPE_IMAGES_FOLDER = "recipeImages"
         private const val FAVORITES_COLLECTION = "favorites"
         private const val RECIPES_FIELD_ID = "id"
         private const val RECIPES_FIELD_TITLE = "title"
@@ -31,7 +36,50 @@ class RecipeRepository {
         private const val QUERY_LIMIT: Long = 100
     }
 
+    fun getRandomString(length: Int) : String {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
     private val remoteDB = FirebaseFirestore.getInstance()
+
+    private val remoteStorage = FirebaseStorage.getInstance()
+
+    fun uploadRecipeImage(recipeImage: File) {
+        val storageRef = remoteStorage.reference
+        var file = Uri.fromFile(recipeImage)
+        var uploadTask = storageRef.child(RECIPE_IMAGES_FOLDER + "/${file.lastPathSegment}")
+            .putFile(file)
+
+        uploadTask.addOnFailureListener {
+            Log.d("RECIPE REPOSITORY: ", "Image upload failed: " + it.message)
+        }.addOnSuccessListener {
+            Log.d("RECIPE REPOSITORY: ", "Image upload successful")
+        }
+
+    }
+
+    fun uploadRecipeImage(itemId: String, recipeImagePath: String): UploadTask {
+
+        // TODO upload приходит пустое изображение 0кб
+
+        Log.d("RECIPE REPOSITORY: ", "recipeImagePath: " + recipeImagePath)
+
+        Log.d("RECIPE REPOSITORY", "UPLOAD IMAGE SIZE BEFORE URI: " + File(recipeImagePath).length())
+
+        val storageRef = remoteStorage.reference
+        val file = Uri.fromFile(File(recipeImagePath))
+
+        Log.d("RECIPE REPOSITORY", "UPLOAD IMAGE SIZE: " + File(file.path).length())
+
+//        var childRef = storageRef.child(RECIPE_IMAGES_FOLDER + "/${file.lastPathSegment}")
+        var childRef = storageRef.child(RECIPE_IMAGES_FOLDER + "/" + itemId + ".jpg")
+        var uploadTask = childRef.putFile(file)
+
+        return uploadTask
+    }
 
     private val changeObservable =
         BehaviorSubject.create<List<DocumentSnapshot>> { emitter: ObservableEmitter<List<DocumentSnapshot>> ->
@@ -74,6 +122,35 @@ class RecipeRepository {
 
         Log.d("DB TEST RETURN", fetchedRecipe.value.toString())
         return fetchedRecipe
+    }
+
+    fun createRecipe(recipe: Recipe) {
+        // Both creates and updates a recipe
+        if(recipe.id.isEmpty()) {
+            recipe.id = getRandomString(20)
+        }
+        val recipeToWrite = hashMapOf(
+            "id" to recipe.id,
+            "title" to recipe.title,
+            "author" to recipe.author,
+            "date" to recipe.date,
+            "image" to recipe.image,
+            "description" to recipe.description,
+            "categories" to recipe.categories,
+            "ingredients" to recipe.ingredients,
+            "rating" to recipe.rating,
+            "steps" to recipe.steps
+        )
+
+        remoteDB.collection(RECIPES_COLLECTION).document(recipe.id)
+            .set(recipeToWrite)
+            .addOnSuccessListener {
+                Log.d("RECIPEREPOSITORY: ", "Recipe write success")
+            }
+            .addOnFailureListener {
+                Log.d("RECIPEREPOSITORY: ", "Recipe write failure: " + it.message)
+            }
+
     }
 
 

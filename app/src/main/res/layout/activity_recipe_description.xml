@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+            android:id="@+id/recipeDescription_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
@@ -32,6 +32,7 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -39,43 +40,52 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <Button
-                android:id="@+id/recipeDescriptionEditButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Edit" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end">
+                <ImageButton
+                    android:id="@+id/recipeDescriptionEditButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="25dp"
+                    android:src="@drawable/ic_create_white_24dp"
+                    android:background="@null"/>
+            </LinearLayout>
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <TextView
-            android:id="@+id/recipeDescriptionAuthor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+<!--        <TextView-->
+<!--            android:id="@+id/recipeDescriptionAuthor"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/text_margin" />-->
 
-        <TextView
-            android:id="@+id/recipeDescriptionDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+<!--        <TextView-->
+<!--            android:id="@+id/recipeDescriptionDate"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/text_margin" />-->
 
-        <TextView
-            android:id="@+id/recipeDescriptionCategories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+<!--        <TextView-->
+<!--            android:id="@+id/recipeDescriptionCategories"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/text_margin" />-->
 
-        <TextView
-            android:id="@+id/recipeDescriptionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:id="@+id/recipeDescriptionText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/text_margin" />-->
+<!--    </LinearLayout>-->
 
 
     <include layout="@layout/content_recipe_description" />

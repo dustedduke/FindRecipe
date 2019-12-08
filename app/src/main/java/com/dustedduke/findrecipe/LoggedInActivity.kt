@@ -1,5 +1,6 @@
 package com.dustedduke.findrecipe
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
@@ -7,9 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,6 +18,11 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.dustedduke.findrecipe.ui.search.SearchFragment
+import id.zelory.compressor.Compressor
+import kotlinx.android.synthetic.main.activity_recipe_description_edit.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -44,7 +48,7 @@ class LoggedInActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_search, R.id.navigation_dashboard, R.id.navigation_notifications
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -70,6 +74,8 @@ class LoggedInActivity : AppCompatActivity() {
         }
     }
 
+    val REQUEST_DETECT = 3
+
     private fun showPictureDialog() {
         val pictureDialog = AlertDialog.Builder(this)
         pictureDialog.setTitle("Select Action")
@@ -77,7 +83,7 @@ class LoggedInActivity : AppCompatActivity() {
         pictureDialog.setItems(pictureDialogItems
         ) { dialog, which ->
             when (which) {
-                //0 -> choosePhotoFromGallary()
+                //0 -> choosePhotoFromGallery()
                 1 -> takePhotoFromCamera()
             }
         }
@@ -88,7 +94,9 @@ class LoggedInActivity : AppCompatActivity() {
 //        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 //        startActivityForResult(intent, 2)
         val intent = Intent(this, DetectorActivity::class.java) // this?
-        startActivity(intent)
+
+        // TODO for result?
+        startActivityForResult(intent, REQUEST_DETECT)
 
     }
 
@@ -100,6 +108,30 @@ class LoggedInActivity : AppCompatActivity() {
          {
          return
          }*/
+        if (requestCode == REQUEST_DETECT) {
+            if(resultCode == Activity.RESULT_OK) {
+                var predictions = data!!.getStringArrayListExtra("predictions")
+                Log.d("LOGGEDINACTIVITY: ", "TF RETURNED: " + predictions)
+
+                // TODO START SEARCH FRAGMENT
+                var searchFragment: SearchFragment = SearchFragment()
+
+                var bundle: Bundle = Bundle()
+                bundle.putStringArrayList("predictions", predictions)
+                searchFragment.arguments = bundle
+
+                searchFragment.arguments
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, searchFragment)
+                    .addToBackStack(null)
+                    .commit()
+
+            }
+        }
+
+
+
+
         if (requestCode == 1)
         {
             if (data != null)
@@ -165,6 +197,7 @@ class LoggedInActivity : AppCompatActivity() {
 
         return ""
     }
+
 
     companion object {
         private val IMAGE_DIRECTORY = "/findrecipe"

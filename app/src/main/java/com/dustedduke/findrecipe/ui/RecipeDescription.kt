@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +18,7 @@ import com.dustedduke.findrecipe.R
 import com.dustedduke.findrecipe.Recipe
 import com.dustedduke.findrecipe.RecipeDescriptionEdit
 import com.dustedduke.findrecipe.RecipeRepository
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.android.synthetic.main.activity_recipe_description.*
 import org.w3c.dom.Text
 
@@ -33,7 +35,7 @@ class RecipeDescription : AppCompatActivity() {
         val itemId = intent.getStringExtra("recipeId")
         Log.d("ItemID inside RECIPEDESCRIPTION: ", itemId)
 
-        val editButton = findViewById<Button>(R.id.recipeDescriptionEditButton)
+        val editButton = findViewById<ImageButton>(R.id.recipeDescriptionEditButton)
         editButton.setOnClickListener {
 
             // TODO edit intent
@@ -55,7 +57,7 @@ class RecipeDescription : AppCompatActivity() {
         val recipe: LiveData<Recipe> = recipeRepository.getRecipeById(itemId)
 
 
-
+        val recipeToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.recipeDescription_toolbar_layout)
         val recipeDescriptionAuthor = findViewById<TextView>(R.id.recipeDescriptionAuthor)
         val recipeDescriptionDate = findViewById<TextView>(R.id.recipeDescriptionDate)
         val recipeDescriptionCategories = findViewById<TextView>(R.id.recipeDescriptionCategories)
@@ -66,6 +68,7 @@ class RecipeDescription : AppCompatActivity() {
         // Добавить данные асинхронно
         recipe.observe(this, Observer {
             Log.d("SETTING RECIPE", "RECIPE")
+            recipeToolbarLayout.title = it.title
             recipeDescriptionAuthor.text = it.author
             recipeDescriptionDate.text = it.date.toString()
             recipeDescriptionCategories.text = it.categories.joinToString(", ")

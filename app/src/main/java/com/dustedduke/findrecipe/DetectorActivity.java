@@ -16,6 +16,8 @@
 
 package com.dustedduke.findrecipe;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -26,7 +28,9 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.media.MediaBrowserCompat;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.View;
@@ -41,8 +45,10 @@ import com.dustedduke.findrecipe.env.Logger;
 import com.dustedduke.findrecipe.tflite.Classifier;
 import com.dustedduke.findrecipe.tflite.TFLiteObjectDetectionAPIModel;
 import com.dustedduke.findrecipe.tracking.MultiBoxTracker;
+import com.dustedduke.findrecipe.ui.search.SearchFragment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -160,10 +166,24 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         public void onClick(View v) {
 
             // Start new activity
+            // TODO уже есть сортировка?
+
             LOGGER.i(mappedRecognitions.stream().map(entry -> entry.getTitle()).collect(Collectors.joining(" ")));
 
+            // TODO открыть поиск (через основную activity)
 
 
+            ArrayList<String> predictions = mappedRecognitions
+                    .stream()
+                    .map(entry -> entry.getTitle())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+
+            // TODO ВЕРНУТЬ mapped recognitions
+            Intent returnIntent = new Intent();
+            returnIntent.putStringArrayListExtra("predictions", predictions);
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
         }
     });
 
