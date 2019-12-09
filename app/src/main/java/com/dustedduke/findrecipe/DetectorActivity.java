@@ -22,15 +22,19 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.View;
@@ -47,6 +51,7 @@ import com.dustedduke.findrecipe.tflite.TFLiteObjectDetectionAPIModel;
 import com.dustedduke.findrecipe.tracking.MultiBoxTracker;
 import com.dustedduke.findrecipe.ui.search.SearchFragment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -70,7 +75,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-  private static final boolean SAVE_PREVIEW_BITMAP = false;
+  private static final boolean SAVE_PREVIEW_BITMAP = true;
   private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
   private Integer sensorOrientation;
@@ -127,6 +132,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       finish();
     }
 
+
+    // TODO точно относится к изображению в камере
     previewWidth = size.getWidth();
     previewHeight = size.getHeight();
 
@@ -134,8 +141,53 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     LOGGER.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
 
     LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
-    rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-    croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+//    rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
+//    croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+
+    String galleryImageUriString = getIntent().getStringExtra("imageUri");
+
+
+    if(galleryImageUriString != null) {
+      Log.d("DETECTOR ACTIVITY: ", "EARLY gallery URI not empty");
+      Uri galleryImageUri = Uri.parse(galleryImageUriString);
+      try {
+          int[] rgbBytes = null;
+          Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
+
+          Log.d("DETECTOR ACTIVITY: ", "EARLY GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
+
+          ByteArrayOutputStream stream = new ByteArrayOutputStream();
+          galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
+          byte[] bitmapBytes = stream.toByteArray();
+
+          rgbBytes = new int[previewWidth * previewHeight];
+
+          ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
+
+
+          Log.d("DETECTOR ACTIVITY: ", "GOT RGB BYTES: " + rgbBytes.toString());
+
+//          rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+          rgbFrameBitmap = galleryImageBitmap;
+          rgbFrameBitmap.setWidth(previewWidth);
+          rgbFrameBitmap.setHeight(previewHeight)  ;//Bitmap.createBitmap(previewWidth, previewHeight, );
+
+          croppedBitmap = galleryImageBitmap; //Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+          croppedBitmap.setWidth(cropSize);
+          croppedBitmap.setHeight(cropSize);
+
+      } catch (Exception e) {
+          Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
+      }
+    } else {
+//      rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
+        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+    }
+
+
+
+
 
     frameToCropTransform =
         ImageUtils.getTransformationMatrix(
@@ -204,7 +256,36 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     computingDetection = true;
     LOGGER.i("Preparing image " + currTimestamp + " for detection in bg thread.");
 
-    rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+
+    String galleryImageUriString = getIntent().getStringExtra("imageUri");
+
+    if(galleryImageUriString != null) {
+        Log.d("DETECTOR ACTIVITY: ", "gallery URI not empty");
+        Uri galleryImageUri = Uri.parse(galleryImageUriString);
+        try {
+            int[] rgbBytes = new int[previewWidth * previewHeight];
+            Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
+
+            Log.d("DETECTOR ACTIVITY: ", "GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
+            byte[] bitmapBytes = stream.toByteArray();
+
+//            rgbBytes = new int[previewWidth * previewHeight];
+
+            ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
+
+
+            Log.d("DETECTOR ACTIVITY: ", "GOT RGB BYTES: " + rgbBytes.length);
+
+            rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+        } catch (Exception e) {
+            Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
+        }
+    } else {
+        rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+    }
 
     readyForNextImage();
 
@@ -222,7 +303,17 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             LOGGER.i("Running detection on image " + currTimestamp);
             final long startTime = SystemClock.uptimeMillis();
             final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-            lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+
+            Log.d("DETECTOR ACTIVITY: ", "PREDICTIONS: " + results.toString());
+
+            if(galleryImageUriString != null) {
+              Log.d("DETECTOR ACTIVITY", "CLOSING DETECTOR< BECAUSE SINGLE IMAGE");
+            }
+
+
+
+
+              lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
             final Canvas canvas = new Canvas(cropCopyBitmap);

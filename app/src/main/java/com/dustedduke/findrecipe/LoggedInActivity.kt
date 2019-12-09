@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -83,11 +84,16 @@ class LoggedInActivity : AppCompatActivity() {
         pictureDialog.setItems(pictureDialogItems
         ) { dialog, which ->
             when (which) {
-                //0 -> choosePhotoFromGallery()
+                0 -> choosePhotoFromGallery()
                 1 -> takePhotoFromCamera()
             }
         }
         pictureDialog.show()
+    }
+
+    private fun choosePhotoFromGallery() {
+        var pickPhoto: Intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(pickPhoto , 4);
     }
 
     private fun takePhotoFromCamera() {
@@ -160,6 +166,31 @@ class LoggedInActivity : AppCompatActivity() {
             saveImage(thumbnail)
             Toast.makeText(this@LoggedInActivity, "Image Saved!", Toast.LENGTH_SHORT).show()
         }
+
+
+        if(requestCode == 4) {
+            if(resultCode == Activity.RESULT_OK && data != null) {
+                var selectedImage: Uri? = data.data
+
+                // TODO putExtra selectedImage
+
+//                val intent = Intent(this, DetectorActivity::class.java) // this?
+//                intent.putExtra("imageUri", selectedImage.toString())
+//                startActivityForResult(intent, REQUEST_DETECT)
+
+                val intent = Intent(this, StaticDetectorActivity::class.java) // this?
+                intent.putExtra("imageUri", selectedImage.toString())
+                startActivityForResult(intent, 5)
+
+            }
+        }
+
+
+        if(requestCode == 5) {
+            // Тоже возвращается лист предсказаний
+        }
+
+
     }
 
     fun saveImage(myBitmap: Bitmap):String {

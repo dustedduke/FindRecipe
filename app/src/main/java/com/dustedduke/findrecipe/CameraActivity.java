@@ -20,6 +20,8 @@ import android.Manifest;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -29,11 +31,14 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
@@ -56,6 +61,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.dustedduke.findrecipe.env.ImageUtils;
 import com.dustedduke.findrecipe.env.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 public abstract class CameraActivity extends AppCompatActivity
@@ -242,7 +248,27 @@ public abstract class CameraActivity extends AppCompatActivity
       rgbBytes = new int[previewWidth * previewHeight];
     }
     try {
-      final Image image = reader.acquireLatestImage();
+
+        Image nonFinalImage = reader.acquireLatestImage(); //final
+
+        // TODO заменить изображение здесь
+        Uri galleryImageUri = Uri.parse(getIntent().getStringExtra("imageUri"));
+
+        if(galleryImageUri != null) {
+            Log.d("CAMERA ACTIVITY: ", "HAVE IMAGE URI");
+            Log.d("CAMERA ACTIVITY: ", "CALLED ON IMAGE AVAILABLE");
+
+            //Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
+            //ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            //galleryImageBitmap.compress(Bitmap.CompressFormat.PNG, 80 , bos);
+
+
+
+            //nonFinalImage = Image
+        }
+
+        final Image image = nonFinalImage;
+
 
       if (image == null) {
         return;
