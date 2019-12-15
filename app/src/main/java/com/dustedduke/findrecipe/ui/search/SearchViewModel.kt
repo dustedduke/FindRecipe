@@ -24,8 +24,8 @@ class SearchViewModel : ViewModel() {
 
     private val recipeRepository: RecipeRepository = RecipeRepository()
 
-    private val _popularRecipes: MutableLiveData<List<Recipe>> = recipeRepository.getRecipesInOrder("rating", 10)
-    val popularRecipes: LiveData<List<Recipe>> = _popularRecipes
+    private val _foundRecipes: MutableLiveData<List<Recipe>> = recipeRepository.getRecipesInOrder("rating", 10)
+    val foundRecipes: LiveData<List<Recipe>> = _foundRecipes
 
 
 

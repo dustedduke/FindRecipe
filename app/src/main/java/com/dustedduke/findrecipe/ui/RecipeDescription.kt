@@ -19,6 +19,7 @@ import com.dustedduke.findrecipe.Recipe
 import com.dustedduke.findrecipe.RecipeDescriptionEdit
 import com.dustedduke.findrecipe.RecipeRepository
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.android.synthetic.main.activity_recipe_description.*
 import org.w3c.dom.Text
 
@@ -84,6 +85,7 @@ class RecipeDescription : AppCompatActivity() {
                 .into(recipeDescriptionImage)
 
         })
+
 
     }
 }

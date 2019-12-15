@@ -49,7 +49,7 @@ class LoggedInActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_search, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_search, R.id.navigation_dashboard, R.id.navigation_user
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -188,6 +188,26 @@ class LoggedInActivity : AppCompatActivity() {
 
         if(requestCode == 5) {
             // Тоже возвращается лист предсказаний
+            var predictions = data!!.getStringArrayListExtra("predictions")
+            Log.d("LOGGEDINACTIVITY: ", "TF STATIC IMAGE RETURNED: " + predictions)
+
+            var bundle: Bundle = Bundle()
+            bundle.putStringArrayList("predictions", predictions)
+
+            // TODO START SEARCH FRAGMENT
+            findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_search, bundle)
+
+
+
+//            var searchFragment: SearchFragment = SearchFragment()
+//
+//
+//
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.root_container, searchFragment)
+//                .addToBackStack(null)
+//                .commit()
+
         }
 
 

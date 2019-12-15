@@ -22,7 +22,9 @@ import java.io.File
 class RecipeRepository {
 
     companion object {
-        private const val RECIPES_COLLECTION = "recipes"
+        val remoteDB = FirebaseFirestore.getInstance()
+        const val RECIPES_COLLECTION = "recipes"
+        const val CATEGORIES_COLLECTION = "categories"
         private const val RECIPE_IMAGES_FOLDER = "recipeImages"
         private const val FAVORITES_COLLECTION = "favorites"
         private const val RECIPES_FIELD_ID = "id"
@@ -34,16 +36,19 @@ class RecipeRepository {
         private const val RECIPES_FIELD_RATING = "rating"
         private const val RECIPES_FIELD_DATE = "date"
         private const val QUERY_LIMIT: Long = 100
+
+        fun getRandomString(length: Int) : String {
+            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
+            return (1..length)
+                .map { allowedChars.random() }
+                .joinToString("")
+        }
+
     }
 
-    fun getRandomString(length: Int) : String {
-        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
-        return (1..length)
-            .map { allowedChars.random() }
-            .joinToString("")
-    }
 
-    private val remoteDB = FirebaseFirestore.getInstance()
+
+//    private val remoteDB = FirebaseFirestore.getInstance()
 
     private val remoteStorage = FirebaseStorage.getInstance()
 
@@ -124,6 +129,29 @@ class RecipeRepository {
         return fetchedRecipe
     }
 
+    fun getRecipeByIdStore(recipeId: String): MutableLiveData<DocumentSnapshot> {
+
+        // TODO попробовать document snapshot
+        // TODO попробовать getDocumentChanges
+
+        val fetchedRecipe = MutableLiveData<DocumentSnapshot>()
+        remoteDB.collection(RECIPES_COLLECTION)
+            .document(recipeId) //"DXdt5iYu7go0ClcQx1de"
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                fetchedRecipe.postValue(documentSnapshot)
+                Log.d("DB TEST", fetchedRecipe.value.toString())
+
+
+
+
+            }
+
+        Log.d("DB TEST RETURN", fetchedRecipe.value.toString())
+        return fetchedRecipe
+    }
+
     fun createRecipe(recipe: Recipe) {
         // Both creates and updates a recipe
         if(recipe.id.isEmpty()) {
@@ -151,6 +179,22 @@ class RecipeRepository {
                 Log.d("RECIPEREPOSITORY: ", "Recipe write failure: " + it.message)
             }
 
+    }
+
+    fun getCategories(): MutableLiveData<List<Category>> {
+
+        val fetchedCategories = MutableLiveData<List<Category>>()
+        remoteDB.collection(CATEGORIES_COLLECTION)
+            .orderBy("order")
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                fetchedCategories.postValue(documentSnapshot.toObjects(Category::class.java))
+                Log.d("DB TEST CAT", fetchedCategories.value.toString())
+            }
+
+        Log.d("DB TEST RETURN CAT", fetchedCategories.value.toString())
+        return fetchedCategories
     }
 
 
@@ -253,8 +297,8 @@ class RecipeRepository {
         ingredients: List<String>,
         orderType: String = RECIPES_FIELD_RATING,
         number: Long = QUERY_LIMIT
-    ): List<Recipe> {
-        var recipesWithIngredients = emptyList<Recipe>()
+    ): MutableLiveData<List<Recipe>> {
+        var recipesWithIngredients = MutableLiveData<List<Recipe>>()
 
         // Partial filtering, since not supported by Firestore API
         remoteDB.collection(RECIPES_COLLECTION)
@@ -262,15 +306,16 @@ class RecipeRepository {
             .orderBy(orderType)
             .limit(number)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                recipesWithIngredients = querySnapshot.toObjects(Recipe::class.java)
+            .addOnSuccessListener { documentSnapshot ->
+                Log.d("RECIPE REPOSITORY: ", "got recipes for search")
+                Log.d("RECIPE REPOSITORY: ", documentSnapshot.toObjects(Recipe::class.java).toString())
+                recipesWithIngredients.postValue(documentSnapshot.toObjects(Recipe::class.java))
             }
             .addOnFailureListener {
-                Log.d("ERROR", "Error getting recipes with ingredients: ${ingredients}")
+                Log.d("ERROR", "Error getting recipes with ingredients: ${ingredients}: " + it.message )
             }
 
-        // Filtering on device
-        return recipesWithIngredients.filter { it.categories.containsAll(ingredients) }
+        return recipesWithIngredients
     }
 
 
