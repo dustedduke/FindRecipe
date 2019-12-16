@@ -1,7 +1,9 @@
 package com.dustedduke.findrecipe
 
+import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +15,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.dustedduke.findrecipe.ui.RecipeDescription
+import com.dustedduke.findrecipe.ui.dashboard.CategoryFragment
+import com.dustedduke.findrecipe.ui.search.SearchFragment
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.storage.FirebaseStorage
 
 class CategoryAdapter() : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    private var listener: (() -> Unit)? = null
+
+    fun setListener(listener: (() -> Unit)?) {
+        this.listener = listener
+    }
 
     private val categories = emptyList<Category>().toMutableList()
     private val storageRef = FirebaseStorage.getInstance().reference
@@ -34,11 +44,19 @@ class CategoryAdapter() : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolde
             itemView.setOnClickListener {
 
                 Log.d("CATEGORY ID: ", itemId)
-                Log.d("CATEGORY title: ", itemTitleText)
+                Log.d("CATEGORY title: ", itemTitle.text.toString())
 
-//                val intent = Intent(itemView.context, RecipeDescription::class.java)
-//                intent.putExtra("recipeId", itemId)
-//                itemView.context.startActivity(intent)
+                listener?.invoke()
+
+//                var categoryFragment: CategoryFragment  = CategoryFragment()
+//
+//                var bundle: Bundle = Bundle()
+//                bundle.putStringArrayList("categoryTitle", itemTitle.text.toString())
+//                categoryFragment.arguments = bundle
+//
+//                categoryFragment.arguments
+
+
             }
 
         }

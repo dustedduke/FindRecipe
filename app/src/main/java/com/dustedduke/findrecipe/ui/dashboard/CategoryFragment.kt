@@ -16,12 +16,11 @@ import com.dustedduke.findrecipe.CategoryAdapter
 import com.dustedduke.findrecipe.R
 import com.dustedduke.findrecipe.RecipeAdapter
 
-class DashboardFragment : Fragment() {
+class CategoryFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var categoryViewModel: CategoryViewModel
 
     private val categoryAdapter = CategoryAdapter()
-
     private var recyclerView: RecyclerView? = null
     private var adapter: RecyclerView.Adapter<*>? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
@@ -31,18 +30,9 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-            ViewModelProviders.of(this).get(DashboardViewModel::class.java)
+        categoryViewModel =
+            ViewModelProviders.of(this).get(CategoryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-
-//        categoryAdapter.setListener {
-//            activity!!.supportFragmentManager
-//                .beginTransaction()
-//                .replace()
-//
-//        }
-
-
 
         recyclerView = root.findViewById<RecyclerView>(R.id.categoriesRecyclerView).apply {
 
@@ -52,7 +42,7 @@ class DashboardFragment : Fragment() {
             adapter = categoryAdapter
         }
 
-        dashboardViewModel.categories.observe(this, Observer {
+        categoryViewModel.categories.observe(this, Observer {
             categoryAdapter.setItems(it)
             //recipeAdapter.notifyDataSetChanged()
 

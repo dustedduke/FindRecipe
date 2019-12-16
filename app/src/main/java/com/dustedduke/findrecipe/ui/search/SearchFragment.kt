@@ -39,6 +39,7 @@ class SearchFragment : Fragment() {
     var foundRecipes: MutableLiveData<List<Recipe>>? = recipeRepository
         .getRecipesInOrder("rating", 10)
 
+    val emptyList: List<Recipe> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,10 +51,14 @@ class SearchFragment : Fragment() {
         val root =
             inflater.inflate(com.dustedduke.findrecipe.R.layout.fragment_search, container, false)
 
+
+
         recyclerView = root.findViewById<RecyclerView>(R.id.searchRecyclerView).apply {
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
             adapter = recipeAdapter
+            recipeAdapter.setItems(emptyList)
         }
+
 
         // Get the SearchView and set the searchable configuration
         val search: SearchView = root.findViewById(R.id.searchField)

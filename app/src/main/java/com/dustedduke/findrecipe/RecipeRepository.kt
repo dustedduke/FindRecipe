@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import java.io.File
+import java.util.*
 
 
 class RecipeRepository {
@@ -25,6 +26,7 @@ class RecipeRepository {
         val remoteDB = FirebaseFirestore.getInstance()
         const val RECIPES_COLLECTION = "recipes"
         const val CATEGORIES_COLLECTION = "categories"
+        const val USERS_COLLECTION = "users"
         private const val RECIPE_IMAGES_FOLDER = "recipeImages"
         private const val FAVORITES_COLLECTION = "favorites"
         private const val RECIPES_FIELD_ID = "id"
@@ -116,17 +118,80 @@ class RecipeRepository {
         // TODO попробовать getDocumentChanges
 
         val fetchedRecipe = MutableLiveData<Recipe>()
+
+        Log.d("GETTING RECIPE BY ID", recipeId)
+
         remoteDB.collection(RECIPES_COLLECTION)
             .document(recipeId) //"DXdt5iYu7go0ClcQx1de"
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                Log.d("GOT RECIPE BY ID: ", documentSnapshot.toString())
                 fetchedRecipe.postValue(documentSnapshot.toObject(Recipe::class.java))
-                Log.d("DB TEST", fetchedRecipe.value.toString())
+
+            }
+            .addOnFailureListener {
+                Log.d("GOT RECIPE BY ID FAILED", it.message)
             }
 
         Log.d("DB TEST RETURN", fetchedRecipe.value.toString())
         return fetchedRecipe
+    }
+
+    fun getUserById(userId: String): MutableLiveData<User> {
+
+        // TODO попробовать document snapshot
+        // TODO попробовать getDocumentChanges
+
+        val fetchedUser = MutableLiveData<User>()
+        remoteDB.collection(USERS_COLLECTION)
+            .document(userId) //"DXdt5iYu7go0ClcQx1de"
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                fetchedUser.postValue(documentSnapshot.toObject(User::class.java))
+                Log.d("DB TEST", fetchedUser.value.toString())
+            }
+
+        Log.d("DB TEST RETURN", fetchedUser.value.toString())
+        return fetchedUser
+    }
+
+    fun getUserFavoritesById(userId: String): MutableLiveData<List<Recipe>>{
+        var favoriteRecipes = MutableLiveData<List<Recipe>>()
+
+        remoteDB.collection(FAVORITES_COLLECTION)
+            .document(userId)
+            .collection("recipes")
+            .orderBy("date")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+
+                favoriteRecipes.postValue(querySnapshot.toObjects(Recipe::class.java))
+                Log.d("POSTED VALUE", favoriteRecipes.toString())
+
+            }
+            .addOnFailureListener {
+                Log.d("ERROR", "Error getting recipes with for user ${userId}")
+            }
+
+        return favoriteRecipes
+    }
+
+    fun getUserCreatedById(userId: String): MutableLiveData<List<Recipe>> {
+        var recipesOfCategory = MutableLiveData<List<Recipe>>()
+        remoteDB.collection(RECIPES_COLLECTION)
+            .whereEqualTo("authorId", userId)
+            .orderBy("date")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                recipesOfCategory.postValue(querySnapshot.toObjects(Recipe::class.java))
+            }
+            .addOnFailureListener {
+                Log.d("ERROR", "Error getting recipes created by " + userId)
+            }
+
+        return recipesOfCategory
     }
 
     fun getRecipeByIdStore(recipeId: String): MutableLiveData<DocumentSnapshot> {
@@ -142,8 +207,6 @@ class RecipeRepository {
                 //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
                 fetchedRecipe.postValue(documentSnapshot)
                 Log.d("DB TEST", fetchedRecipe.value.toString())
-
-
 
 
             }
@@ -180,6 +243,39 @@ class RecipeRepository {
             }
 
     }
+
+
+    fun createFavoriteRecipe(recipe: Recipe) {
+        // Both creates and updates a recipe
+        if(recipe.id.isEmpty()) {
+            recipe.id = getRandomString(20)
+        }
+        val recipeToWrite = hashMapOf(
+            "id" to recipe.id,
+            "title" to recipe.title,
+            "author" to recipe.author,
+            "date" to recipe.date,
+            "image" to recipe.image,
+            "description" to recipe.description,
+            "categories" to recipe.categories,
+            "ingredients" to recipe.ingredients,
+            "rating" to recipe.rating,
+            "steps" to recipe.steps
+        )
+
+        remoteDB.collection(RECIPES_COLLECTION).document(recipe.id)
+            .set(recipeToWrite)
+            .addOnSuccessListener {
+                Log.d("RECIPEREPOSITORY: ", "Recipe write success")
+            }
+            .addOnFailureListener {
+                Log.d("RECIPEREPOSITORY: ", "Recipe write failure: " + it.message)
+            }
+
+    }
+
+
+
 
     fun getCategories(): MutableLiveData<List<Category>> {
 
@@ -300,9 +396,12 @@ class RecipeRepository {
     ): MutableLiveData<List<Recipe>> {
         var recipesWithIngredients = MutableLiveData<List<Recipe>>()
 
+
+        Log.d("SEARCHING FOR INGREDIENTS: ", ingredients.toString())
+
         // Partial filtering, since not supported by Firestore API
         remoteDB.collection(RECIPES_COLLECTION)
-            .whereArrayContains("ingredients", ingredients.get(0))
+            .whereArrayContains("ingredients", ingredients.get(0))//.whereArrayContains("ingredients", ingredients.get(0))
             .orderBy(orderType)
             .limit(number)
             .get()
@@ -328,38 +427,93 @@ class RecipeRepository {
             .map { list -> list.map(::mapDocumentToRemoteTask) }
 
 
-    fun updateFavoriteRecipes(recipeId: String) {
+
+    fun updateFavoriteRecipes(recipeId: String, title: String, image: String, date: Date) {
         val mFirebaseAuth = FirebaseAuth.getInstance()
         val mFirebaseUser = mFirebaseAuth.currentUser
-        val favoritesRef = remoteDB.collection(FAVORITES_COLLECTION)//.document(mFirebaseUser!!.uid)
+        val favoritesRef = remoteDB.collection(FAVORITES_COLLECTION)
+            .document(mFirebaseUser!!.uid)
+            .collection(RECIPES_COLLECTION)
 
+        var check: Map<String, Any>? = null
 
-        favoritesRef.whereArrayContains("recipes", recipeId).get()
-            .addOnSuccessListener { querySnapshot ->
-                if(querySnapshot.isEmpty) {
+        favoritesRef.document(recipeId)
+            .get()
+            .addOnSuccessListener {
+
+                check = it.data
+
+                if(check == null) {
                     Log.d("RECIPEREPOSITORY", "Adding recipe " + recipeId + " to " + mFirebaseUser!!.uid)
 
-                    favoritesRef.document(mFirebaseUser!!.uid)
-                        .update(RECIPES_COLLECTION, FieldValue.arrayUnion(recipeId)).addOnFailureListener{
-                            Log.d("RECIPEREPOSITORY", "ADDITION FAILED: " + it.message)
-                        }
+                    val recipeToWrite = hashMapOf(
+                        "id" to recipeId,
+                        "title" to title,
+                        "date" to date,
+                        "image" to image
+                    )
 
+                    favoritesRef.document(recipeId)
+                        .set(recipeToWrite)
+                        .addOnSuccessListener {
+                            Log.d("RECIPEREPOSITORY: ", "Recipe write success")
+                        }
+                        .addOnFailureListener {
+                            Log.d("RECIPEREPOSITORY: ", "Recipe write failure: " + it.message)
+                        }
                 } else {
-
-                    Log.d("RECIPEREPOSITORY", "Deleting recipe " + recipeId + " from " + mFirebaseUser!!.uid)
-
-                    favoritesRef.document(mFirebaseUser!!.uid)
-                        .update(RECIPES_COLLECTION, FieldValue.arrayRemove(recipeId)).addOnFailureListener{
-                            Log.d("RECIPEREPOSITORY", "DELETION FAILED: " + it.message)
-                        }
-
+                    it.data
+                    Log.d("RECIPEREPOSITORY", "Removing recipe " + recipeId + " to " + mFirebaseUser!!.uid + " " + it.data.toString())
+                    favoritesRef.document(recipeId).delete()
                 }
 
             }
+            .addOnFailureListener {
 
-        // TODO возвращение значения для изменения кнопки
+                Log.d("FAILURE", "REPO ADD FAILURE " + it.message)
+
+            }
 
     }
+
+
+
+
+    // TODO original updateFavoriteRecipes
+//    fun updateFavoriteRecipes(recipeId: String) {
+//        val mFirebaseAuth = FirebaseAuth.getInstance()
+//        val mFirebaseUser = mFirebaseAuth.currentUser
+//        val favoritesRef = remoteDB.collection(FAVORITES_COLLECTION)
+//            .document(mFirebaseUser!!.uid)
+//            .collection(RECIPES_COLLECTION)
+//
+//
+//        favoritesRef.whereArrayContains("recipes", recipeId).get()
+//            .addOnSuccessListener { querySnapshot ->
+//                if(querySnapshot.isEmpty) {
+//                    Log.d("RECIPEREPOSITORY", "Adding recipe " + recipeId + " to " + mFirebaseUser!!.uid)
+//
+//                    favoritesRef.document(mFirebaseUser!!.uid)
+//                        .update(RECIPES_COLLECTION, FieldValue.arrayUnion(recipeId)).addOnFailureListener{
+//                            Log.d("RECIPEREPOSITORY", "ADDITION FAILED: " + it.message)
+//                        }
+//
+//                } else {
+//
+//                    Log.d("RECIPEREPOSITORY", "Deleting recipe " + recipeId + " from " + mFirebaseUser!!.uid)
+//
+//                    favoritesRef.document(mFirebaseUser!!.uid)
+//                        .update(RECIPES_COLLECTION, FieldValue.arrayRemove(recipeId)).addOnFailureListener{
+//                            Log.d("RECIPEREPOSITORY", "DELETION FAILED: " + it.message)
+//                        }
+//
+//                }
+//
+//            }
+//
+//        // TODO возвращение значения для изменения кнопки
+//
+//    }
 
 
 

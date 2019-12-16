@@ -249,14 +249,14 @@ public abstract class CameraActivity extends AppCompatActivity
     }
     try {
 
-        Image nonFinalImage = reader.acquireLatestImage(); //final
+        final Image image = reader.acquireLatestImage();
 
         // TODO заменить изображение здесь
-        Uri galleryImageUri = Uri.parse(getIntent().getStringExtra("imageUri"));
+        //Uri galleryImageUri = Uri.parse(getIntent().getStringExtra("imageUri"));
 
-        if(galleryImageUri != null) {
-            Log.d("CAMERA ACTIVITY: ", "HAVE IMAGE URI");
-            Log.d("CAMERA ACTIVITY: ", "CALLED ON IMAGE AVAILABLE");
+//        if(galleryImageUri != null) {
+//            Log.d("CAMERA ACTIVITY: ", "HAVE IMAGE URI");
+//            Log.d("CAMERA ACTIVITY: ", "CALLED ON IMAGE AVAILABLE");
 
             //Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
             //ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -265,9 +265,9 @@ public abstract class CameraActivity extends AppCompatActivity
 
 
             //nonFinalImage = Image
-        }
 
-        final Image image = nonFinalImage;
+
+//        final Image image = nonFinalImage;
 
 
       if (image == null) {

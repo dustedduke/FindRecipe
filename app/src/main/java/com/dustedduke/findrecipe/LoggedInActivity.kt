@@ -126,11 +126,14 @@ class LoggedInActivity : AppCompatActivity() {
                 bundle.putStringArrayList("predictions", predictions)
                 searchFragment.arguments = bundle
 
-                searchFragment.arguments
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, searchFragment)
-                    .addToBackStack(null)
-                    .commit()
+                // TODO START SEARCH FRAGMENT
+                findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_search, bundle)
+
+//                searchFragment.arguments
+//                supportFragmentManager.beginTransaction()
+//                    .replace(R.id.nav_host_fragment, searchFragment)
+//                    .addToBackStack(null)
+//                    .commit()
 
             }
         }

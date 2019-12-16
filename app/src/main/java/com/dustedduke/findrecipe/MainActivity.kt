@@ -32,6 +32,16 @@ class MainActivity: AppCompatActivity() {
             signIn(view, emailField.text.toString(), passwordField.text.toString())
         }
 
+        var user = fbAuth.currentUser
+        Log.d("LOGIN", fbAuth.currentUser.toString())
+        if(user != null) {
+            var intent = Intent(this, LoggedInActivity::class.java)
+            intent.putExtra("id", fbAuth.currentUser?.email)
+            startActivity(intent)
+        } else {
+            Log.d("No logged in users", "LOGIN")
+        }
+
     }
 
     fun signIn(view: View,email: String, password: String){

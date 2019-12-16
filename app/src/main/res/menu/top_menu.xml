@@ -7,5 +7,4 @@
         android:icon="@drawable/ic_camera"
         android:title="Find on photo"
         app:showAsAction="ifRoom"/>
-
 </menu>

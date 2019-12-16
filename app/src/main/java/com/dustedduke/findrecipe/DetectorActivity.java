@@ -75,7 +75,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-  private static final boolean SAVE_PREVIEW_BITMAP = true;
+  private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
   private Integer sensorOrientation;
@@ -147,43 +147,41 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     String galleryImageUriString = getIntent().getStringExtra("imageUri");
 
 
-    if(galleryImageUriString != null) {
-      Log.d("DETECTOR ACTIVITY: ", "EARLY gallery URI not empty");
-      Uri galleryImageUri = Uri.parse(galleryImageUriString);
-      try {
-          int[] rgbBytes = null;
-          Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
-
-          Log.d("DETECTOR ACTIVITY: ", "EARLY GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
-
-          ByteArrayOutputStream stream = new ByteArrayOutputStream();
-          galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
-          byte[] bitmapBytes = stream.toByteArray();
-
-          rgbBytes = new int[previewWidth * previewHeight];
-
-          ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
-
-
-          Log.d("DETECTOR ACTIVITY: ", "GOT RGB BYTES: " + rgbBytes.toString());
-
-//          rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
-          rgbFrameBitmap = galleryImageBitmap;
-          rgbFrameBitmap.setWidth(previewWidth);
-          rgbFrameBitmap.setHeight(previewHeight)  ;//Bitmap.createBitmap(previewWidth, previewHeight, );
-
-          croppedBitmap = galleryImageBitmap; //Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
-          croppedBitmap.setWidth(cropSize);
-          croppedBitmap.setHeight(cropSize);
-
-      } catch (Exception e) {
-          Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
-      }
-    } else {
+//    if(galleryImageUriString != null) {
+//      Log.d("DETECTOR ACTIVITY: ", "EARLY gallery URI not empty");
+//      Uri galleryImageUri = Uri.parse(galleryImageUriString);
+//      try {
+//          int[] rgbBytes = null;
+//          Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
+//
+//          Log.d("DETECTOR ACTIVITY: ", "EARLY GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
+//
+//          ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//          galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
+//          byte[] bitmapBytes = stream.toByteArray();
+//
+//          rgbBytes = new int[previewWidth * previewHeight];
+//
+//          ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
+//
+//
+////          rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+//          rgbFrameBitmap = galleryImageBitmap;
+//          rgbFrameBitmap.setWidth(previewWidth);
+//          rgbFrameBitmap.setHeight(previewHeight)  ;//Bitmap.createBitmap(previewWidth, previewHeight, );
+//
+//          croppedBitmap = galleryImageBitmap; //Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+//          croppedBitmap.setWidth(cropSize);
+//          croppedBitmap.setHeight(cropSize);
+//
+//      } catch (Exception e) {
+//          Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
+//      }
+//    } else {
 //      rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
-    }
+//    }
 
 
 
@@ -259,33 +257,33 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     String galleryImageUriString = getIntent().getStringExtra("imageUri");
 
-    if(galleryImageUriString != null) {
-        Log.d("DETECTOR ACTIVITY: ", "gallery URI not empty");
-        Uri galleryImageUri = Uri.parse(galleryImageUriString);
-        try {
-            int[] rgbBytes = new int[previewWidth * previewHeight];
-            Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
-
-            Log.d("DETECTOR ACTIVITY: ", "GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
-            byte[] bitmapBytes = stream.toByteArray();
-
-//            rgbBytes = new int[previewWidth * previewHeight];
-
-            ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
-
-
-            Log.d("DETECTOR ACTIVITY: ", "GOT RGB BYTES: " + rgbBytes.length);
-
-            rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
-        } catch (Exception e) {
-            Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
-        }
-    } else {
+//    if(galleryImageUriString != null) {
+//        Log.d("DETECTOR ACTIVITY: ", "gallery URI not empty");
+//        Uri galleryImageUri = Uri.parse(galleryImageUriString);
+//        try {
+//            int[] rgbBytes = new int[previewWidth * previewHeight];
+//            Bitmap galleryImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryImageUri);
+//
+//            Log.d("DETECTOR ACTIVITY: ", "GOT BITMAP FROM GALLERY: " + galleryImageBitmap.toString());
+//
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            galleryImageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
+//            byte[] bitmapBytes = stream.toByteArray();
+//
+////            rgbBytes = new int[previewWidth * previewHeight];
+//
+//            ImageUtils.convertYUV420SPToARGB8888(bitmapBytes, previewWidth, previewHeight, rgbBytes);
+//
+//
+//            Log.d("DETECTOR ACTIVITY: ", "GOT RGB BYTES: " + rgbBytes.length);
+//
+//            rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+//        } catch (Exception e) {
+//            Log.d("DETECTOR ACTIVITY: ", "bitmap decoding exception: " + e.getMessage());
+//        }
+//    } else {
         rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
-    }
+//    }
 
     readyForNextImage();
 

@@ -22,6 +22,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.android.synthetic.main.activity_recipe_description.*
 import org.w3c.dom.Text
+import java.util.*
 
 class RecipeDescription : AppCompatActivity() {
 
@@ -34,6 +35,8 @@ class RecipeDescription : AppCompatActivity() {
 
         // Load everything from database
         val itemId = intent.getStringExtra("recipeId")
+        var imageLink = ""
+        var date: Date = Date()
         Log.d("ItemID inside RECIPEDESCRIPTION: ", itemId)
 
         val editButton = findViewById<ImageButton>(R.id.recipeDescriptionEditButton)
@@ -47,13 +50,7 @@ class RecipeDescription : AppCompatActivity() {
 
         }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
 
-            recipeRepository.updateFavoriteRecipes(itemId)
-
-        }
 
         val recipe: LiveData<Recipe> = recipeRepository.getRecipeById(itemId)
 
@@ -66,15 +63,27 @@ class RecipeDescription : AppCompatActivity() {
         val recipeDescriptionSteps = findViewById<TextView>(R.id.recipeDescriptionSteps)
         val recipeDescriptionImage = findViewById<ImageView>(R.id.recipeDescriptionImage)
 
+
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
+
+            recipeRepository.updateFavoriteRecipes(itemId, recipeToolbarLayout.title.toString(), imageLink, date)
+
+        }
+
+
         // Добавить данные асинхронно
         recipe.observe(this, Observer {
-            Log.d("SETTING RECIPE", "RECIPE")
+            Log.d("SETTING RECIPE", "RECIPE:" + it.id)
             recipeToolbarLayout.title = it.title
             recipeDescriptionAuthor.text = it.author
             recipeDescriptionDate.text = it.date.toString()
             recipeDescriptionCategories.text = it.categories.joinToString(", ")
             recipeDescriptionText.text = it.description
             recipeDescriptionSteps.text = it.steps
+            imageLink = it.image
+            date = it.date
 
             Glide.with(this)
                 .load(it.image)

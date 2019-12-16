@@ -5,152 +5,200 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/userImageBlock"
-            android:paddingBottom="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/userImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true">
-
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerInside"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/circle"
-                    android:src="@drawable/ic_face_black_110dp"></ImageView>
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="User"
-                android:layout_below="@id/userImage"
-                android:layout_centerHorizontal="true">
-
-            </TextView>
-
-        </RelativeLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/userInfoBlock"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/userFavoritesBlock"
+                android:id="@+id/userImageBlock"
+                android:paddingBottom="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingTop="5dp"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:paddingBottom="5dp">
+                android:layout_height="wrap_content">
 
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/userImageRelative"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_centerHorizontal="true">
 
-                    <TextView
-                        android:id="@+id/userFavoritesNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="15"
-                        android:textSize="25sp"
-                        android:textColor="@color/colorAccent"/>
+                    <ImageView
+                        android:id="@+id/userImage"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/circle"
+                        android:src="@drawable/ic_face_black_110dp"></ImageView>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Favorites"
-                        android:textAllCaps="true"
-                        android:textSize="15sp"/>
+                </RelativeLayout>
 
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    android:layout_below="@id/userImageRelative"
+                    android:layout_centerHorizontal="true">
 
-                </LinearLayout>
+                </TextView>
+
+                <ImageButton
+                    android:id="@+id/userLogoutButton"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/ic_exit_to_app_black_24dp"
+                    android:layout_below="@id/userName"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"/>
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/userCreatedBlock"
+            <LinearLayout
+                android:id="@+id/userInfoBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingTop="5dp"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:paddingBottom="5dp">
+                android:orientation="horizontal"
+                android:paddingBottom="10dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/userFavoritesBlock"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_gravity="center"
+                    android:paddingTop="5dp"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:paddingBottom="5dp">
 
-                    <TextView
-                        android:id="@+id/userCreatedNumber"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="25sp"
-                        android:textColor="@color/colorAccent"/>
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                    <TextView
+                        <TextView
+                            android:id="@+id/userFavoritesNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="15"
+                            android:textSize="25sp"
+                            android:textColor="@color/colorAccent"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Favorites"
+                            android:textAllCaps="true"
+                            android:textSize="15sp"/>
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/userCreatedBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingTop="5dp"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:paddingBottom="5dp">
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Created"
-                        android:textAllCaps="true"
-                        android:textSize="15sp"/>
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/userCreatedNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="25sp"
+                            android:textColor="@color/colorAccent"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Created"
+                            android:textAllCaps="true"
+                            android:textSize="15sp"/>
 
 
-                </LinearLayout>
+                    </LinearLayout>
 
-            </RelativeLayout>
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TabHost
+                    android:id="@android:id/tabhost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TabWidget
+                            android:id="@android:id/tabs"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        </TabWidget>
+                        <FrameLayout
+                            android:id="@android:id/tabcontent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/userFavoritesGrid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/userCreatedGrid"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:clipToPadding="false"
+                                android:orientation="vertical"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"/>
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+
+                </TabHost>
+
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-
-    <TextView
-        android:id="@+id/text_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

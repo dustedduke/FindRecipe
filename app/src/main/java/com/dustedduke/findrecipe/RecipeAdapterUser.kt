@@ -62,7 +62,7 @@ import com.google.firebase.storage.FirebaseStorage
 //}
 
 
-class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+class RecipeAdapterUser() : RecyclerView.Adapter<RecipeAdapterUser.RecipeViewHolder>() {
 
     private val recipes = emptyList<Recipe>().toMutableList()
     private val storageRef = FirebaseStorage.getInstance().reference
@@ -71,16 +71,14 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
         var itemId = ""
         var itemImage: ImageView
         var itemTitle: TextView
-        var itemDescription: TextView
 
         init {
-            itemImage = itemView.findViewById(R.id.recipeImageView)
-            itemTitle = itemView.findViewById(R.id.recipeTitleView)
-            itemDescription = itemView.findViewById(R.id.recipeDescriptionView)
+            itemImage = itemView.findViewById(R.id.recipeImageViewUser)
+            itemTitle = itemView.findViewById(R.id.recipeTitleViewUser)
 
             itemView.setOnClickListener {
 
-                Log.d("OPENING FULL DESCIPTION FOR RECIPE ID: ", itemId)
+                Log.d("USER TAB RECIPE ID: ", itemId)
 
                 val intent = Intent(itemView.context, RecipeDescription::class.java)
                 intent.putExtra("recipeId", itemId)
@@ -107,7 +105,7 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.recipe_card, parent, false)
+            .inflate(R.layout.recipe_card_user, parent, false)
         return RecipeViewHolder(v)
     }
 
@@ -116,6 +114,7 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
         //holder.itemImage.setImageURI(recipe.image)
         Log.d("STORAGE URL: ", recipe.image)
+        Log.d("USER TAB RECIPE ID", recipe.id)
 
         Glide.with(holder.itemView)
             .load(recipe.image)
@@ -127,7 +126,6 @@ class RecipeAdapter() : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
         holder.itemId = recipe.id
         holder.itemTitle.setText(recipe.title)
-        holder.itemDescription.setText(recipe.description)
 
         Log.d("RECIPEADAPTERTEST", "HOLDER TEST: ${holder.itemTitle.text}")
 
