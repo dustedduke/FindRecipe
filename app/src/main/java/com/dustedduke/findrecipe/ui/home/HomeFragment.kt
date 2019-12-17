@@ -33,10 +33,21 @@ class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
 
-    private val recipeAdapter = RecipeAdapter()
-    private var recyclerView: RecyclerView? = null
-    private var adapter: RecyclerView.Adapter<*>? = null
-    private var layoutManager: RecyclerView.LayoutManager? = null
+    private val recipeAdapter1 = RecipeAdapter()
+    private val recipeAdapter2 = RecipeAdapter()
+    private val recipeAdapter3 = RecipeAdapter()
+
+    private var recyclerView1: RecyclerView? = null
+    private var recyclerView2: RecyclerView? = null
+    private var recyclerView3: RecyclerView? = null
+
+    private var adapter1: RecyclerView.Adapter<*>? = null
+    private var adapter2: RecyclerView.Adapter<*>? = null
+    private var adapter3: RecyclerView.Adapter<*>? = null
+
+    private var layoutManager1: RecyclerView.LayoutManager? = null
+    private var layoutManager2: RecyclerView.LayoutManager? = null
+    private var layoutManager3: RecyclerView.LayoutManager? = null
 
 
     override fun onCreateView(
@@ -50,20 +61,44 @@ class HomeFragment : Fragment() {
             inflater.inflate(com.dustedduke.findrecipe.R.layout.fragment_home, container, false)
 
 
-        recyclerView = root.findViewById<RecyclerView>(R.id.recipesRecyclerView).apply {
+        recyclerView1 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView1).apply {
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = recipeAdapter
+            adapter = recipeAdapter1
+        }
+
+        recyclerView2 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView2).apply {
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter2
+        }
+
+        recyclerView3 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView3).apply {
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter3
         }
 
         homeViewModel.popularRecipes.observe(this, Observer {
-            recipeAdapter.setItems(it)
+            recipeAdapter1.setItems(it)
             //recipeAdapter.notifyDataSetChanged()
 
-            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter.itemCount}")
+            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter1.itemCount}")
 
         })
 
-        Log.d("HOMEFRAGMENTTEST", "RECIPEADAPTER ITEM COUNT ${recipeAdapter.itemCount}")
+        homeViewModel.popularRecipes.observe(this, Observer {
+            recipeAdapter2.setItems(it)
+            //recipeAdapter.notifyDataSetChanged()
+
+            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter2.itemCount}")
+
+        })
+
+        homeViewModel.popularRecipes.observe(this, Observer {
+            recipeAdapter3.setItems(it)
+            //recipeAdapter.notifyDataSetChanged()
+
+            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter3.itemCount}")
+
+        })
 
         return root
     }
