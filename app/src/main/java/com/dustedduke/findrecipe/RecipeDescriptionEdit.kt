@@ -64,8 +64,12 @@ class RecipeDescriptionEdit : AppCompatActivity() {
         val recipeDescriptionTextEdit = findViewById<EditText>(R.id.recipeDescriptionTextEdit)
         val recipeDescriptionStepsEdit = findViewById<EditText>(R.id.recipeDescriptionStepsEdit)
         val recipeDescriptionImageEdit = findViewById<ImageView>(R.id.recipeDescriptionImageEdit)
+
+        val recipeDescriptionDeleteButton = findViewById<Button>(R.id.recipeDescriptionDeleteEdit)
+
         recipeDescriptionImageDelete = findViewById<ImageView>(R.id.recipeDescriptionImageDeleteEdit)
         recipeDescriptionImageAdd = findViewById<ImageView>(R.id.recipeDescriptionImageAddEdit)
+
 //        val recipeDescriptionImageDelete = findViewById<ImageView>(R.id.recipeDescriptionImageDeleteEdit)
 //        val recipeDescriptionImageAdd = findViewById<ImageView>(R.id.recipeDescriptionImageAddEdit)
 
@@ -113,6 +117,14 @@ class RecipeDescriptionEdit : AppCompatActivity() {
                 recipeDescriptionStepsEdit.setText(it.steps)
 
 
+                recipeDescriptionDeleteButton.setOnClickListener{ view ->
+                    Log.d("Deleting recipe", it.title)
+                    recipeRepository.deleteRecipe(itemId)
+                    val intent = Intent(this, LoggedInActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    finish()
+                }
 
                 recipeDescriptionImageAdd!!.setOnClickListener { view ->
                     Log.d("Add image button: ", "hit")

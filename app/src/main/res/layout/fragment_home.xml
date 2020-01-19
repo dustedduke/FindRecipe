@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingBottom="60dp">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -31,16 +35,13 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recipesRecyclerView1"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
-                android:paddingLeft="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/HomeHeader1" />
+                android:paddingLeft="24dp" />
 
             <TextView
                 android:id="@+id/HomeHeader2"
@@ -49,23 +50,19 @@
                 android:layout_marginTop="8dp"
                 android:paddingLeft="24dp"
                 android:text="Recent"
-                android:textSize="26dp"
-                app:layout_constraintTop_toBottomOf="@id/recipesRecyclerView1">
+                android:textSize="26dp">
 
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recipesRecyclerView2"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
-                android:paddingLeft="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/HomeHeader2" />
+                android:paddingLeft="24dp" />
 
 
             <TextView
@@ -75,26 +72,52 @@
                 android:layout_marginTop="8dp"
                 android:paddingLeft="24dp"
                 android:text="Monthly"
-                android:textSize="26dp"
-                app:layout_constraintTop_toBottomOf="@id/recipesRecyclerView2">
+                android:textSize="26dp">
 
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recipesRecyclerView3"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
-                android:paddingLeft="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/HomeHeader3" />
+                android:paddingLeft="24dp" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80sp"
+        android:layout_marginRight="15sp"
+        android:src="@drawable/ic_favorite_white_24dp"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_gravity="end|bottom"
+        />
+
+
+
+
+    <!--    <android.support.design.widget.FloatingActionButton-->
+<!--        android:id="@+id/fab"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end|bottom"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:contentDescription="@string/submit"-->
+<!--        android:src="@drawable/"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/scrollView2"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/scrollView2" />-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

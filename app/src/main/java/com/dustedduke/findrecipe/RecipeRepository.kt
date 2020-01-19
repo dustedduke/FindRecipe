@@ -28,6 +28,7 @@ class RecipeRepository {
         const val CATEGORIES_COLLECTION = "categories"
         const val USERS_COLLECTION = "users"
         private const val RECIPE_IMAGES_FOLDER = "recipeImages"
+        private const val USERS_IMAGES_FOLDER = "userImages"
         private const val FAVORITES_COLLECTION = "favorites"
         private const val RECIPES_FIELD_ID = "id"
         private const val RECIPES_FIELD_TITLE = "title"
@@ -78,6 +79,26 @@ class RecipeRepository {
 
         val storageRef = remoteStorage.reference
         val file = Uri.fromFile(File(recipeImagePath))
+
+        Log.d("RECIPE REPOSITORY", "UPLOAD IMAGE SIZE: " + File(file.path).length())
+
+//        var childRef = storageRef.child(RECIPE_IMAGES_FOLDER + "/${file.lastPathSegment}")
+        var childRef = storageRef.child(USERS_IMAGES_FOLDER + "/" + itemId + ".jpg")
+        var uploadTask = childRef.putFile(file)
+
+        return uploadTask
+    }
+
+    fun uploadUserImage(itemId: String, userImagePath: String): UploadTask {
+
+        // TODO upload приходит пустое изображение 0кб
+
+        Log.d("RECIPE REPOSITORY: ", "userImagePath: " + userImagePath)
+
+        Log.d("RECIPE REPOSITORY", "UPLOAD IMAGE SIZE BEFORE URI: " + File(userImagePath).length())
+
+        val storageRef = remoteStorage.reference
+        val file = Uri.fromFile(File(userImagePath))
 
         Log.d("RECIPE REPOSITORY", "UPLOAD IMAGE SIZE: " + File(file.path).length())
 
@@ -136,6 +157,29 @@ class RecipeRepository {
 
         Log.d("DB TEST RETURN", fetchedRecipe.value.toString())
         return fetchedRecipe
+    }
+
+    fun createUser(user: User) {
+        // TODO так нельзя делать, потому что id должны быть одинаковыми в 2-х местах
+//        if(user.id.isEmpty()) {
+//            user.id = getRandomString(20)
+//        }
+        val userToWrite = hashMapOf(
+            "id" to user.id,
+            "image" to user.image,
+            "name" to user.name,
+            "type" to user.type
+        )
+
+        remoteDB.collection(USERS_COLLECTION).document(user.id)
+            .set(userToWrite)
+            .addOnSuccessListener {
+                Log.d("RECIPEREPOSITORY: ", "User write success")
+            }
+            .addOnFailureListener {
+                Log.d("RECIPEREPOSITORY: ", "User write failure: " + it.message)
+            }
+
     }
 
     fun getUserById(userId: String): MutableLiveData<User> {
@@ -343,19 +387,47 @@ class RecipeRepository {
         filterValue: String,
         orderType: String = RECIPES_FIELD_RATING,
         number: Long = QUERY_LIMIT
-    ): List<Recipe> {
-        var recipesOfCategory = emptyList<Recipe>()
+    ): MutableLiveData<List<Recipe>>{
+        var recipesOfCategory = MutableLiveData<List<Recipe>>()
         remoteDB.collection(RECIPES_COLLECTION)
             .whereEqualTo(filterType, filterValue)
             .orderBy(orderType)
             .limit(number)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                recipesOfCategory = querySnapshot.toObjects(Recipe::class.java)
+            .addOnSuccessListener { documentSnapshot ->
+                Log.d("Got recipes of category with size ", documentSnapshot.size().toString())
+                recipesOfCategory.postValue(documentSnapshot.toObjects(Recipe::class.java))
             }
             .addOnFailureListener {
                 Log.d("ERROR", "Error getting recipes with ${filterType} equals ${filterValue}")
             }
+
+        return recipesOfCategory
+    }
+
+    fun getRecipesInOrderWhereContains(
+        filterType: String,
+        filterValue: String,
+        orderType: String = RECIPES_FIELD_RATING,
+        number: Long = QUERY_LIMIT
+    ): MutableLiveData<List<Recipe>>{
+
+        Log.d("RECIPE REPOSITORY", "Called where contains")
+
+        var recipesOfCategory = MutableLiveData<List<Recipe>>()
+        remoteDB.collection(RECIPES_COLLECTION)
+            .whereArrayContains(filterType, filterValue)
+            .orderBy(orderType)
+            .limit(number)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                Log.d("Got recipes of category with size ", documentSnapshot.size().toString())
+                recipesOfCategory.postValue(documentSnapshot.toObjects(Recipe::class.java))
+            }
+            .addOnFailureListener {
+                Log.d("ERROR", "Error getting recipes with ${filterType} equals ${filterValue}")
+            }
+
 
         return recipesOfCategory
     }
@@ -385,8 +457,9 @@ class RecipeRepository {
 
     // Specializations
 
-    fun getRecipesWithCategory(category: String): List<Recipe> {
-        return getRecipesInOrderWithEqual("category", category)
+    fun getRecipesWithCategory(category: String): MutableLiveData<List<Recipe>> {
+        Log.d("RECIPE REPOSITORY", "Called getRecipesWithCategory " + category)
+        return getRecipesInOrderWhereContains("categories", category)
     }
 
     fun getRecipesWithIngredients(
@@ -401,7 +474,7 @@ class RecipeRepository {
 
         // Partial filtering, since not supported by Firestore API
         remoteDB.collection(RECIPES_COLLECTION)
-            .whereArrayContains("ingredients", ingredients.get(0))//.whereArrayContains("ingredients", ingredients.get(0))
+            .whereArrayContainsAny("ingredients", ingredients)//.whereArrayContains("ingredients", ingredients.get(0))
             .orderBy(orderType)
             .limit(number)
             .get()
@@ -427,6 +500,34 @@ class RecipeRepository {
             .map { list -> list.map(::mapDocumentToRemoteTask) }
 
 
+    fun checkIfFavorite(recipeId: String): LiveData<Boolean> {
+        val mFirebaseAuth = FirebaseAuth.getInstance()
+        val mFirebaseUser = mFirebaseAuth.currentUser
+        val favoritesRef = remoteDB.collection(FAVORITES_COLLECTION)
+            .document(mFirebaseUser!!.uid)
+            .collection(RECIPES_COLLECTION)
+
+        var isFavorite = MutableLiveData<Boolean>()
+
+        favoritesRef.document(recipeId)
+            .get()
+            .addOnSuccessListener {
+                if(it.exists()) {
+                    Log.d("Found recipe " + recipeId, " in favorites")
+                    isFavorite.postValue(true)
+                } else {
+                    Log.d("Not found recipe " + recipeId, " in favorites")
+                    isFavorite.postValue(false)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("Not found recipe " + recipeId, " in favorites")
+                isFavorite.postValue(false)
+            }
+
+        return isFavorite
+
+    }
 
     fun updateFavoriteRecipes(recipeId: String, title: String, image: String, date: Date) {
         val mFirebaseAuth = FirebaseAuth.getInstance()
@@ -476,6 +577,11 @@ class RecipeRepository {
 
     }
 
+    fun deleteRecipe(recipeId: String) {
+        val recipesRef = remoteDB.collection(RECIPES_COLLECTION)
+        Log.d("RECIPEREPOSITORY", "Removing recipe " + recipeId)
+        recipesRef.document(recipeId).delete()
+    }
 
 
 

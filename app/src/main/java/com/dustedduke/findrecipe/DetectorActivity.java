@@ -231,6 +231,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             // TODO ВЕРНУТЬ mapped recognitions
             Intent returnIntent = new Intent();
+            Log.d("DetectorActivity", "Predictions: " + predictions.toString());
             returnIntent.putStringArrayListExtra("predictions", predictions);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();

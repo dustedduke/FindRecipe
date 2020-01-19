@@ -20,7 +20,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
 
-    private val categoryAdapter = CategoryAdapter()
+
 
     private var recyclerView: RecyclerView? = null
     private var adapter: RecyclerView.Adapter<*>? = null
@@ -42,6 +42,7 @@ class DashboardFragment : Fragment() {
 //
 //        }
 
+        val categoryAdapter = CategoryAdapter(fragmentManager!!)
 
 
         recyclerView = root.findViewById<RecyclerView>(R.id.categoriesRecyclerView).apply {

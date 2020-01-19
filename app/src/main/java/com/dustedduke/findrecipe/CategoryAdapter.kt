@@ -10,19 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.dustedduke.findrecipe.ui.RecipeDescription
+import com.dustedduke.findrecipe.ui.dashboard.CategoryDescriptionFragment
 import com.dustedduke.findrecipe.ui.dashboard.CategoryFragment
 import com.dustedduke.findrecipe.ui.search.SearchFragment
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.storage.FirebaseStorage
 
-class CategoryAdapter() : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(fragmentManager: FragmentManager) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     private var listener: (() -> Unit)? = null
+    private var fragmentManagerLocal = fragmentManager
 
     fun setListener(listener: (() -> Unit)?) {
         this.listener = listener
@@ -46,7 +49,28 @@ class CategoryAdapter() : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolde
                 Log.d("CATEGORY ID: ", itemId)
                 Log.d("CATEGORY title: ", itemTitle.text.toString())
 
-                listener?.invoke()
+                //listener?.invoke()
+
+
+                // TODO здесь открывается категория
+                // TODO вызвать фрагмент с названием категории
+
+                var bundle = Bundle()
+                bundle.putString("categoryName", itemTitle.text.toString())
+
+                var fragmentTransaction = fragmentManagerLocal.beginTransaction()
+                var descriptionFragment = CategoryDescriptionFragment()
+                descriptionFragment.arguments = bundle
+
+                Log.d("CategoryAdapter", "Starting description fragment with " + bundle.getString("categoryName") + " category")
+
+
+                // TODO проверить что такое fram
+                fragmentTransaction.replace(R.id.nav_host_fragment, descriptionFragment)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+
+
 
 //                var categoryFragment: CategoryFragment  = CategoryFragment()
 //

@@ -20,7 +20,6 @@ class CategoryFragment : Fragment() {
 
     private lateinit var categoryViewModel: CategoryViewModel
 
-    private val categoryAdapter = CategoryAdapter()
     private var recyclerView: RecyclerView? = null
     private var adapter: RecyclerView.Adapter<*>? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
@@ -33,6 +32,9 @@ class CategoryFragment : Fragment() {
         categoryViewModel =
             ViewModelProviders.of(this).get(CategoryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+
+        val categoryAdapter = CategoryAdapter(fragmentManager!!)
+
 
         recyclerView = root.findViewById<RecyclerView>(R.id.categoriesRecyclerView).apply {
 

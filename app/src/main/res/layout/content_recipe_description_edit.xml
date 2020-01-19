@@ -54,6 +54,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin" />
+
+        <Button
+            android:id="@+id/recipeDescriptionDeleteEdit"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@color/colorAccentRed"
+            android:text="Delete"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold">
+        </Button>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

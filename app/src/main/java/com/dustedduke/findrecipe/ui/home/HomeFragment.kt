@@ -25,8 +25,7 @@ import android.graphics.ColorSpace.Model
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.SnapshotParser
-
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class HomeFragment : Fragment() {
@@ -55,6 +54,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root =
@@ -99,6 +99,13 @@ class HomeFragment : Fragment() {
             Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter3.itemCount}")
 
         })
+
+        val fabButton = root.findViewById<FloatingActionButton>(R.id.fabHome)
+        fabButton.setOnClickListener {
+            Log.d("Pushed home fab button", "")
+
+        }
+
 
         return root
     }

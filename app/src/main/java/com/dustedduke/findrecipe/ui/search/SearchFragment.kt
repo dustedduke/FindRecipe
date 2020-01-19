@@ -56,7 +56,7 @@ class SearchFragment : Fragment() {
         recyclerView = root.findViewById<RecyclerView>(R.id.searchRecyclerView).apply {
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
             adapter = recipeAdapter
-            recipeAdapter.setItems(emptyList)
+            //recipeAdapter.setItems(emptyList)
         }
 
 
@@ -70,13 +70,15 @@ class SearchFragment : Fragment() {
         search.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
-                // TODO не только ингредиенты
+                // TODO db вызывается напрямую, поэтому found recipes не обновляется
+
+
                 Log.d("SEARCH FRAGMENT: ", "QUERY SUBMITTED: " + query)
-                var ingredients = query!!.split("  ")
-                foundRecipes = recipeRepository.getRecipesWithIngredients(ingredients)
+                var ingredients = query!!.split(" ")
+                searchViewModel.updateIngredients(ingredients)
+                //foundRecipes = recipeRepository.getRecipesWithIngredients(ingredients)
 
-
-                return false
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -87,30 +89,8 @@ class SearchFragment : Fragment() {
 
         })
 
-
-//        search.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(, SearchableActivity::class.java)))
-//        val searchRequestString = arguments!!.getStringArrayList("request")
-//        searchTitle.setText(searchRequestString.toString())
-
-        var predictions = ArrayList<String>()
-
-        arguments?.getStringArrayList("predictions")?.let {
-            predictions = it
-            Log.d("SEARCH FRAGMENT: ", "RECEIVED: " + predictions.toString())
-        }
-
-        if(predictions.isNotEmpty()) {
-            // Submit: true
-            var predictionsString = predictions.toString()
-            var processedPredictionsString = predictionsString
-                .subSequence(1, predictionsString.length - 1)
-                .replace("[,]".toRegex(), " ")
-
-            Log.d("SEARCH FRAGMENT:  ", "PREDICT STRING: " + processedPredictionsString)
-            search.setQuery(processedPredictionsString, true)
-        }
-
-        foundRecipes!!.observe(this, Observer {
+        searchViewModel.foundRecipes.observe(this, Observer {
+            Log.d("SearchFragment", "Updating search recycler with " + it.toString())
             recipeAdapter.setItems(it)
             //recipeAdapter.notifyDataSetChanged()
 
@@ -118,6 +98,33 @@ class SearchFragment : Fragment() {
             Log.d("SEARCHFRAGMENTTEST", "RECIPES: " + it.toString())
 
         })
+
+//        search.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(, SearchableActivity::class.java)))
+//        val searchRequestString = arguments!!.getStringArrayList("request")
+//        searchTitle.setText(searchRequestString.toString())
+
+        var predictions = listOf<String>()
+
+        arguments?.getStringArrayList("predictions")?.let {
+            predictions = it.distinct()
+            Log.d("SEARCH FRAGMENT: ", "RECEIVED: " + predictions.toString())
+        }
+
+        // TODO ошибка в regex с двойным пробелом
+
+        if(predictions.isNotEmpty()) {
+            // Submit: true
+            var predictionsString = predictions.toString()
+            var processedPredictionsString = predictionsString
+                .subSequence(1, predictionsString.length - 1)
+                .replace("[,]".toRegex(), "")
+
+            Log.d("SEARCH FRAGMENT:  ", "PREDICT STRING: " + processedPredictionsString)
+            search.setQuery(processedPredictionsString, true)
+        }
+
+
+
 
 
 
@@ -128,8 +135,6 @@ class SearchFragment : Fragment() {
 //            Log.d("SEARCHFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter.itemCount}")
 //
 //        })
-
-        Log.d("SEARCHFRAGMENTTEST", "RECIPEADAPTER ITEM COUNT ${recipeAdapter.itemCount}")
 
         return root
     }

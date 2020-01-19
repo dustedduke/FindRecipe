@@ -3,6 +3,7 @@ package com.dustedduke.findrecipe.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -19,6 +20,7 @@ import com.dustedduke.findrecipe.Recipe
 import com.dustedduke.findrecipe.RecipeDescriptionEdit
 import com.dustedduke.findrecipe.RecipeRepository
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.android.synthetic.main.activity_recipe_description.*
 import org.w3c.dom.Text
@@ -33,6 +35,8 @@ class RecipeDescription : AppCompatActivity() {
         setContentView(R.layout.activity_recipe_description)
         setSupportActionBar(toolbar)
 
+        val currentUser: String = FirebaseAuth.getInstance().currentUser!!.uid
+
         // Load everything from database
         val itemId = intent.getStringExtra("recipeId")
         var imageLink = ""
@@ -40,6 +44,7 @@ class RecipeDescription : AppCompatActivity() {
         Log.d("ItemID inside RECIPEDESCRIPTION: ", itemId)
 
         val editButton = findViewById<ImageButton>(R.id.recipeDescriptionEditButton)
+        editButton.visibility = View.GONE
         editButton.setOnClickListener {
 
             // TODO edit intent
@@ -51,8 +56,9 @@ class RecipeDescription : AppCompatActivity() {
         }
 
 
-
         val recipe: LiveData<Recipe> = recipeRepository.getRecipeById(itemId)
+        val isFavorite: LiveData<Boolean> = recipeRepository.checkIfFavorite(itemId)
+        var favoriteActive = false
 
 
         val recipeToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.recipeDescription_toolbar_layout)
@@ -70,8 +76,26 @@ class RecipeDescription : AppCompatActivity() {
 
             recipeRepository.updateFavoriteRecipes(itemId, recipeToolbarLayout.title.toString(), imageLink, date)
 
+            // TODO кнопка не обновляется автоматически
+            if(favoriteActive) {
+                fab.setImageResource(R.drawable.ic_favorite_red_border_24dp)
+                favoriteActive = false
+            } else {
+                fab.setImageResource(R.drawable.ic_favorite_red_fill_24dp)
+                favoriteActive = true
+            }
+
         }
 
+        isFavorite.observe(this, Observer {
+            if(it.equals(true)) {
+                fab.setImageResource(R.drawable.ic_favorite_red_fill_24dp)
+                favoriteActive = true
+            } else {
+                fab.setImageResource(R.drawable.ic_favorite_red_border_24dp)
+                favoriteActive = false
+            }
+        })
 
         // Добавить данные асинхронно
         recipe.observe(this, Observer {
@@ -84,6 +108,15 @@ class RecipeDescription : AppCompatActivity() {
             recipeDescriptionSteps.text = it.steps
             imageLink = it.image
             date = it.date
+
+            Log.d("Checking if", it.authorId + " == " + currentUser)
+
+            if(it.authorId.toString() == currentUser.toString()) {
+                Log.d("User created this recipe", it.title)
+                editButton.visibility = View.VISIBLE
+            } else {
+                Log.d("User didn't create this recipe", it.title)
+            }
 
             Glide.with(this)
                 .load(it.image)
