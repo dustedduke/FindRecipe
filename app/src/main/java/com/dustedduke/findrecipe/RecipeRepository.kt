@@ -22,6 +22,13 @@ import java.util.*
 
 class RecipeRepository {
 
+    fun getRandomString(length: Int) : String {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
     companion object {
         val remoteDB = FirebaseFirestore.getInstance()
         const val RECIPES_COLLECTION = "recipes"
@@ -30,6 +37,7 @@ class RecipeRepository {
         private const val RECIPE_IMAGES_FOLDER = "recipeImages"
         private const val USERS_IMAGES_FOLDER = "userImages"
         private const val FAVORITES_COLLECTION = "favorites"
+        private const val REVIEWS_COLLECTION = "reviews"
         private const val RECIPES_FIELD_ID = "id"
         private const val RECIPES_FIELD_TITLE = "title"
         private const val RECIPES_FIELD_DESCRIPTION = "description"
@@ -39,13 +47,6 @@ class RecipeRepository {
         private const val RECIPES_FIELD_RATING = "rating"
         private const val RECIPES_FIELD_DATE = "date"
         private const val QUERY_LIMIT: Long = 100
-
-        fun getRandomString(length: Int) : String {
-            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
-            return (1..length)
-                .map { allowedChars.random() }
-                .joinToString("")
-        }
 
     }
 
@@ -182,6 +183,76 @@ class RecipeRepository {
 
     }
 
+    fun checkIfUserRated(userId: String, recipeId: String): LiveData<Boolean> {
+        var userRated = MutableLiveData<Boolean>()
+        remoteDB.collection(REVIEWS_COLLECTION)
+            .whereEqualTo("recipe", recipeId)
+            .whereEqualTo("user", userId)
+            .get()
+            .addOnSuccessListener {
+                if(it.isEmpty) {
+                    userRated.postValue(false)
+                } else {
+                    userRated.postValue(true)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("RECIPE REPOSITORY", "Failed fetching rating")
+            }
+
+        return userRated
+    }
+
+    fun createRating(userId: String, recipeId: String, value: Float) {
+        val ratingToWrite = hashMapOf(
+            "user" to userId,
+            "recipe" to recipeId,
+            "value" to value
+        )
+
+        remoteDB.collection(REVIEWS_COLLECTION).document(getRandomString(20))
+            .set(ratingToWrite)
+            .addOnSuccessListener {
+                Log.d("RECIPEREPOSITORY: ", "Rating write success")
+            }
+            .addOnFailureListener {
+                Log.d("RECIPEREPOSITORY: ", "Rating write failure: " + it.message)
+            }
+    }
+
+    fun updateRecipeRating(recipeId: String, value: Float) {
+        remoteDB.collection(RECIPES_COLLECTION)
+            .document(recipeId) //"DXdt5iYu7go0ClcQx1de"
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                val recipe = documentSnapshot.toObject(Recipe::class.java)
+                var recipeRating = recipe!!.rating
+                Log.d("Current recipe rating", recipeRating.toString())
+
+                remoteDB.collection(REVIEWS_COLLECTION)
+                    .get()
+                    .addOnCompleteListener{
+                        if(it.isSuccessful) {
+                            val numberOfReviews = it.getResult()!!.size()
+
+                            remoteDB.collection(RECIPES_COLLECTION)
+                                .document(recipeId)
+                                .update("rating", (recipeRating + value) / numberOfReviews)
+
+                            Log.d("New recipe rating", (recipeRating + value).toString() )
+
+                        }
+                    }
+
+
+            }
+
+
+
+
+    }
+
     fun getUserById(userId: String): MutableLiveData<User> {
 
         // TODO попробовать document snapshot
@@ -268,6 +339,7 @@ class RecipeRepository {
             "id" to recipe.id,
             "title" to recipe.title,
             "author" to recipe.author,
+            "authorId" to recipe.authorId,
             "date" to recipe.date,
             "image" to recipe.image,
             "description" to recipe.description,

@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity: AppCompatActivity() {
@@ -93,6 +94,10 @@ class MainActivity: AppCompatActivity() {
 
         fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
             if(task.isSuccessful){
+
+//                val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(email.substringBefore("@")).build()
+//                fbAuth.currentUser!!.updateProfile(profileUpdates)
+
                 var intent = Intent(this, LoggedInActivity::class.java)
                 intent.putExtra("id", fbAuth.currentUser?.email)
                 startActivity(intent)
@@ -109,6 +114,11 @@ class MainActivity: AppCompatActivity() {
 
         fbAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
             if(task.isSuccessful){
+
+                // TODO add fbAuth.displayname
+                val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(email.substringBefore("@")).build()
+                fbAuth.currentUser!!.updateProfile(profileUpdates)
+
                 repository.createUser(User(fbAuth.currentUser?.uid!!, email.substringBefore("@"), "user", DEFAULT_IMAGE))
                 var intent = Intent(this, LoggedInActivity::class.java)
                 intent.putExtra("id", fbAuth.currentUser?.email)

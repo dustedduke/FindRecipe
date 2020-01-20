@@ -265,8 +265,12 @@ class UserFragment : Fragment() {
             Log.d("USER DESCRIPTION: ", "CALLED ON ACTIVITY RESULT: " + REQUEST_TAKE_PHOTO)
             //processCapturedPhoto()
 
+            val internalFile = File(currentPhotoPath)
+            Log.d("INTERNAL FILE PATH", internalFile.path)
+            Log.d("INTERNAL FILE ABS PATH", internalFile.absolutePath)
+
             val compressedImageFile =
-                Compressor(activity!!.applicationContext).compressToFile(File(currentPhotoPath))
+                Compressor(activity!!.applicationContext).compressToFile(internalFile)
             Log.d("USER DESCRIPTION EDIT: COMPRESSED FILE PATH:", compressedImageFile.path)
             // TODO удаление фотографии из базы? не нужно, потому что обновление?
 

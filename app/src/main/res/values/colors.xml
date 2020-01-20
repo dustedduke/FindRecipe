@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#B6B6B6</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="colorAccentRed">#E60000</color>
+    <color name="colorAccentOrange">#FF6531</color>
 <!--    <color name="colorAccent">#D81B60</color>-->
 
     <color name="semi_transparent">#66000000</color>

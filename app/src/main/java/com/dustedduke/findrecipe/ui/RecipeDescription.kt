@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -24,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.android.synthetic.main.activity_recipe_description.*
 import org.w3c.dom.Text
+import java.text.SimpleDateFormat
 import java.util.*
 
 class RecipeDescription : AppCompatActivity() {
@@ -60,7 +58,7 @@ class RecipeDescription : AppCompatActivity() {
         val isFavorite: LiveData<Boolean> = recipeRepository.checkIfFavorite(itemId)
         var favoriteActive = false
 
-
+        var recipeId: String = ""
         val recipeToolbarLayout = findViewById<CollapsingToolbarLayout>(R.id.recipeDescription_toolbar_layout)
         val recipeDescriptionAuthor = findViewById<TextView>(R.id.recipeDescriptionAuthor)
         val recipeDescriptionDate = findViewById<TextView>(R.id.recipeDescriptionDate)
@@ -68,6 +66,9 @@ class RecipeDescription : AppCompatActivity() {
         val recipeDescriptionText = findViewById<TextView>(R.id.recipeDescriptionText)
         val recipeDescriptionSteps = findViewById<TextView>(R.id.recipeDescriptionSteps)
         val recipeDescriptionImage = findViewById<ImageView>(R.id.recipeDescriptionImage)
+        val recipeDescriptionIngredients = findViewById<TextView>(R.id.recipeDescriptiontIngredients)
+        val recipeRatingBar = findViewById<RatingBar>(R.id.recipeRatingBar)
+        val recipeRatingSubmitButton = findViewById<Button>(R.id.recipeRatingSubmitButton)
 
 
         fab.setOnClickListener { view ->
@@ -99,15 +100,23 @@ class RecipeDescription : AppCompatActivity() {
 
         // Добавить данные асинхронно
         recipe.observe(this, Observer {
+
+            val format = SimpleDateFormat("dd/MM/yyyy")
+
             Log.d("SETTING RECIPE", "RECIPE:" + it.id)
+            recipeId = it.id
             recipeToolbarLayout.title = it.title
             recipeDescriptionAuthor.text = it.author
-            recipeDescriptionDate.text = it.date.toString()
+            recipeDescriptionDate.text = format.format(it.date)
+            recipeDescriptionIngredients.text = it.ingredients.distinct().toString().subSequence(1, it.ingredients.distinct().toString().length - 1)
             recipeDescriptionCategories.text = it.categories.joinToString(", ")
             recipeDescriptionText.text = it.description
             recipeDescriptionSteps.text = it.steps
             imageLink = it.image
             date = it.date
+
+            // TODO берется общий рейтинг
+            recipeRatingBar.rating = it.rating
 
             Log.d("Checking if", it.authorId + " == " + currentUser)
 
@@ -126,6 +135,31 @@ class RecipeDescription : AppCompatActivity() {
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .into(recipeDescriptionImage)
 
+        })
+
+        // TODO использовать ratingbar и reviews
+        // TODO можно не использовать review потому что рейтинг постоянно меняется
+
+        recipeRatingSubmitButton.setOnClickListener {
+            // TODO update rating here
+            recipeRepository.createRating(currentUser, recipeId, recipeRatingBar.rating)
+            recipeRatingSubmitButton.visibility = View.GONE
+
+            // TODO need to count number of reviews
+
+            // TODO update rating in recipe
+            recipeRepository.updateRecipeRating(recipeId, recipeRatingBar.rating)
+
+        }
+
+        val currentUserRatedThisRecipe: LiveData<Boolean> = recipeRepository.checkIfUserRated(currentUser, recipeId)
+
+        currentUserRatedThisRecipe.observe(this, Observer {
+            if(it == true) {
+                recipeRatingSubmitButton.visibility = View.GONE
+            } else {
+                recipeRatingSubmitButton.visibility = View.VISIBLE
+            }
         })
 
 

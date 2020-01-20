@@ -15,34 +15,125 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Author"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <TextView
             android:id="@+id/recipeDescriptionAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/recipeDescriptionDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Categories"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/recipeDescriptionCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/recipeDescriptiontIngredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/recipeDescriptionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Steps"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/recipeDescriptionSteps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:id="@+id/recipeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:theme="@style/RatingBar"
+            />
+
+        <Button
+            android:id="@+id/recipeRatingSubmitButton"
+            android:layout_width="100sp"
+            android:layout_height="50sp"
+            android:text="Submit"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10sp"/>
+
     </LinearLayout>
 
 <!--    <TextView-->

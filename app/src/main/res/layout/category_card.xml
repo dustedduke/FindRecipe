@@ -27,7 +27,8 @@
             android:singleLine="true"
             android:text="Title"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"/>
 
     </RelativeLayout>
 

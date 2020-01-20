@@ -109,4 +109,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_recipe_description">RecipeDescription</string>
     <string name="title_activity_recipe_description_edit">RecipeDescriptionEdit</string>
+    <string name="title_activity_recipe_create_edit">RecipeCreateEdit</string>
 </resources>

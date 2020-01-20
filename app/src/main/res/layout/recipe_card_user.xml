@@ -24,11 +24,12 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/recipeImageViewSearch"
-            android:paddingLeft="10dp"
+            android:paddingLeft="5dp"
             android:singleLine="true"
             android:text="Title"
             android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"/>
 
     </RelativeLayout>
 

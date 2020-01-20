@@ -178,19 +178,18 @@ class RecipeDescriptionEdit : AppCompatActivity() {
                         Log.d("Delete image button: ", "hit")
 
                         it.image = ""
-                        recipeDescriptionImageEdit.setImageResource(R.drawable.ic_camera)
+                        recipeDescriptionImageEdit.setImageResource(0)
                         recipeDescriptionImageDelete!!.visibility = View.INVISIBLE
                         recipeDescriptionImageAdd!!.visibility = View.VISIBLE
                     }
                 } else {
                     recipeDescriptionImageAdd!!.visibility = View.VISIBLE
-
                 }
 
                 Glide.with(this)
                     .load(it.image)
                     .placeholder(R.drawable.ic_baseline_remove) // TODO  Можно loading spinner
-                    .error(R.drawable.ic_camera)
+                    .error(0)
                     .fallback(R.drawable.ic_baseline_remove)
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(recipeDescriptionImageEdit)
@@ -289,7 +288,7 @@ class RecipeDescriptionEdit : AppCompatActivity() {
                         Glide.with(this)
                             .load(it)
                             .placeholder(R.drawable.ic_baseline_remove) // TODO  Можно loading spinner
-                            .error(R.drawable.ic_camera)
+                            .error(0)
                             .fallback(R.drawable.ic_baseline_remove)
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
                             .into(recipeDescriptionImageEdit)

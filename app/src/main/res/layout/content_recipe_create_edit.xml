@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".RecipeDescriptionEdit"
+    tools:showIn="@layout/activity_recipe_description_edit">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recipe title"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/recipeCreateTitleEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin" />
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Recipe title"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginLeft="18sp"-->
+<!--            android:textColor="@color/colorPrimaryDarker"/>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/recipeCreateAuthorEdit"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="@dimen/text_margin"-->
+<!--            android:layout_marginRight="@dimen/text_margin"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Recipe title"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginLeft="18sp"-->
+<!--            android:textColor="@color/colorPrimaryDarker"/>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/recipeCreateDateEdit"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="@dimen/text_margin"-->
+<!--            android:layout_marginRight="@dimen/text_margin"/>-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/recipeCreateIngredientsEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Categories"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/recipeCreateCategoriesEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/recipeCreateTextEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Steps"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20sp"
+            android:textColor="@color/colorPrimaryDarker"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/recipeCreateStepsEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"/>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
