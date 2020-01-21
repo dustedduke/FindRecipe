@@ -46,7 +46,7 @@ class RecipeRepository {
         private const val RECIPES_FIELD_CATEGORIES = "categories"
         private const val RECIPES_FIELD_RATING = "rating"
         private const val RECIPES_FIELD_DATE = "date"
-        private const val QUERY_LIMIT: Long = 100
+        private const val QUERY_LIMIT: Long = 20
 
     }
 
@@ -537,8 +537,8 @@ class RecipeRepository {
     fun getRecipesWithIngredients(
         ingredients: List<String>,
         orderType: String = RECIPES_FIELD_RATING,
-        number: Long = QUERY_LIMIT
-    ): MutableLiveData<List<Recipe>> {
+        number: Long = QUERY_LIMIT          // TODO можно передать последний документ в предыдущем запросе
+    ): MutableLiveData<List<Recipe>> {      // TODO можно просто увеличивать лимит
         var recipesWithIngredients = MutableLiveData<List<Recipe>>()
 
 

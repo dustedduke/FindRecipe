@@ -55,7 +55,14 @@ class SearchFragment : Fragment() {
 
         recyclerView = root.findViewById<RecyclerView>(R.id.searchRecyclerView).apply {
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+
+//            setRVLayoutManager()
+//            setRVScrollListener()
+
+            // TODO зачем это
+            recipeAdapter.notifyDataSetChanged()
             adapter = recipeAdapter
+
             //recipeAdapter.setItems(emptyList)
         }
 

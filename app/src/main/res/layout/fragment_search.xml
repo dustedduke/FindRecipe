@@ -27,6 +27,12 @@
             android:layout_height="match_parent"
             />
 
+        <ProgressBar
+            android:id="@+id/searchProgressBar"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
