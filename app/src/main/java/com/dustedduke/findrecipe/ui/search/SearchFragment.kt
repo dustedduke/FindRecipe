@@ -1,9 +1,8 @@
 package com.dustedduke.findrecipe.ui.search
 
-import android.app.Activity
 import android.app.SearchManager
-import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,17 +13,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.ArrayList
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import android.graphics.ColorSpace.Model
 import android.widget.*
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.dustedduke.findrecipe.*
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.SnapshotParser
-import kotlinx.android.synthetic.main.activity_camera.view.*
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.w3c.dom.Text
 
 
 class SearchFragment : Fragment() {
@@ -32,14 +25,32 @@ class SearchFragment : Fragment() {
     private lateinit var searchViewModel: SearchViewModel
 
     private val recipeAdapter = RecipeAdapterSearch()
-    private var recyclerView: RecyclerView? = null
+
+
+
+    // TODO попробовать отключить recyclerview, когда нет поиска
+    // View.GONE
+
+//    private val searchRecyclerView: RecyclerView? = null
     private var adapter: RecyclerView.Adapter<*>? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
+
+    private val recipeAdapter1 = RecipeAdapter()
+    private val recipeAdapter2 = RecipeAdapter()
+    private val recipeAdapter3 = RecipeAdapter()
+
+//    private val recyclerView1: RecyclerView? = null
+//    private val recyclerView2: RecyclerView? = null
+//    private val recyclerView3: RecyclerView? = null
+
+
     private val recipeRepository: RecipeRepository = RecipeRepository()
     var foundRecipes: MutableLiveData<List<Recipe>>? = recipeRepository
         .getRecipesInOrder("rating", 10)
 
     val emptyList: List<Recipe> = emptyList()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,8 +63,39 @@ class SearchFragment : Fragment() {
             inflater.inflate(com.dustedduke.findrecipe.R.layout.fragment_search, container, false)
 
 
+        val fabButton = root.findViewById<FloatingActionButton>(R.id.fabSearch)
+        fabButton.hide()
+        fabButton.setOnClickListener {
+            Log.d("Pushed home fab button", "Pushed button")
+            val intent = Intent(activity!!.applicationContext, RecipeCreateEdit::class.java)
+            startActivity(intent)
+        }
 
-        recyclerView = root.findViewById<RecyclerView>(R.id.searchRecyclerView).apply {
+        val recyclerTextView1 = root.findViewById<TextView>(R.id.SearchHeader1)
+        val recyclerTextView2 = root.findViewById<TextView>(R.id.SearchHeader2)
+        val recyclerTextView3 = root.findViewById<TextView>(R.id.SearchHeader3)
+
+
+        recyclerTextView3.visibility = View.GONE
+
+
+        val recyclerView1 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView1Search).apply {
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter1
+        }
+
+        val recyclerView2 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView2Search).apply {
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter2
+        }
+
+//        val recyclerView3 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView3).apply {
+//            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+//            adapter = recipeAdapter3
+//        }
+
+
+        val searchRecyclerView = root.findViewById<RecyclerView>(R.id.searchRecyclerView).apply {
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
 
 //            setRVLayoutManager()
@@ -83,6 +125,18 @@ class SearchFragment : Fragment() {
                 Log.d("SEARCH FRAGMENT: ", "QUERY SUBMITTED: " + query)
                 var ingredients = query!!.split(" ")
                 searchViewModel.updateIngredients(ingredients)
+
+
+
+                recyclerView1.visibility = View.GONE
+                recyclerView2.visibility = View.GONE
+
+                recyclerTextView1.visibility = View.GONE
+                recyclerTextView2.visibility = View.GONE
+
+                searchRecyclerView.visibility = View.VISIBLE
+
+
                 //foundRecipes = recipeRepository.getRecipesWithIngredients(ingredients)
 
                 return true
@@ -94,7 +148,31 @@ class SearchFragment : Fragment() {
                 return false
             }
 
+
+
         })
+
+
+
+        search.setOnCloseListener(object: SearchView.OnCloseListener {
+            override fun onClose(): Boolean {
+
+                Log.d("SEARCH", "CLOSE BUTTON HIT")
+
+                recipeAdapter1.setItems(emptyList)
+
+                recyclerView1.visibility = View.VISIBLE
+                recyclerView2.visibility = View.VISIBLE
+
+                recyclerTextView1.visibility = View.VISIBLE
+                recyclerTextView2.visibility = View.VISIBLE
+
+                searchRecyclerView.visibility = View.GONE
+                return false
+            }
+        })
+
+
 
         searchViewModel.foundRecipes.observe(this, Observer {
             Log.d("SearchFragment", "Updating search recycler with " + it.toString())
@@ -103,6 +181,22 @@ class SearchFragment : Fragment() {
 
             Log.d("SEARCHFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter.itemCount}")
             Log.d("SEARCHFRAGMENTTEST", "RECIPES: " + it.toString())
+
+        })
+
+        searchViewModel.popularRecipes.observe(this, Observer {
+            recipeAdapter1.setItems(it)
+            //recipeAdapter.notifyDataSetChanged()
+
+            Log.d("SEARCHFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter1.itemCount}")
+
+        })
+
+        searchViewModel.newRecipes.observe(this, Observer {
+            recipeAdapter2.setItems(it)
+            //recipeAdapter.notifyDataSetChanged()
+
+            Log.d("SEARCHFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter2.itemCount}")
 
         })
 
@@ -131,6 +225,13 @@ class SearchFragment : Fragment() {
         }
 
 
+        searchViewModel.user.observe(this, Observer {
+            if(it.type == "chef") {
+                fabButton.show()
+            } else {
+                fabButton.hide()
+            }
+        })
 
 
 
@@ -142,6 +243,8 @@ class SearchFragment : Fragment() {
 //            Log.d("SEARCHFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter.itemCount}")
 //
 //        })
+
+
 
         return root
     }

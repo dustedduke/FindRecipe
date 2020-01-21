@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dustedduke.findrecipe.*
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,6 +25,7 @@ class SearchViewModel : ViewModel() {
 
 
     private val recipeRepository: RecipeRepository = RecipeRepository()
+    val fbAuth = FirebaseAuth.getInstance()
 
     private var _foundRecipes: MutableLiveData<List<Recipe>> = MutableLiveData<List<Recipe>>() //recipeRepository.getRecipesInOrder("rating", 10)
     var foundRecipes: LiveData<List<Recipe>> = _foundRecipes
@@ -32,8 +34,14 @@ class SearchViewModel : ViewModel() {
     val mediator: LiveData<List<Recipe>> = _mediator
 
 
+    private val _popularRecipes: MutableLiveData<List<Recipe>> = recipeRepository.getRecipesInOrder("rating", 10)
+    val popularRecipes: LiveData<List<Recipe>> = _popularRecipes
 
+    private val _newRecipes: MutableLiveData<List<Recipe>> = recipeRepository.getRecipesInOrder("date", 10)
+    val newRecipes: LiveData<List<Recipe>> = _newRecipes
 
+    private val _user: MutableLiveData<User> = recipeRepository.getUserById(fbAuth.currentUser!!.uid)
+    var user: LiveData<User> = _user
 
 
     fun updateIngredients(ingredients: List<String>) {

@@ -438,6 +438,8 @@ class RecipeRepository {
         // TODO попробовать document snapshot
         // TODO попробовать getDocumentChanges
 
+        Log.d("Getting recipes in order", orderType)
+
         val fetchedRecipes = MutableLiveData<List<Recipe>>()
         remoteDB.collection(RECIPES_COLLECTION)
             .orderBy(orderType)
@@ -445,6 +447,8 @@ class RecipeRepository {
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 //fetchedRecipes.value = documentSnapshot.toObjects(Recipe::class.java)
+                Log.d("Got recipes in order", documentSnapshot.size().toString())
+
                 fetchedRecipes.postValue(documentSnapshot.toObjects(Recipe::class.java))
                 Log.d("DB TEST", fetchedRecipes.value.toString())
             }

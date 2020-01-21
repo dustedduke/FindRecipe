@@ -72,7 +72,7 @@ class RecipeDescription : AppCompatActivity() {
 
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
 
             recipeRepository.updateFavoriteRecipes(itemId, recipeToolbarLayout.title.toString(), imageLink, date)

@@ -77,10 +77,10 @@ class HomeFragment : Fragment() {
             adapter = recipeAdapter2
         }
 
-        recyclerView3 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView3).apply {
-            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = recipeAdapter3
-        }
+//        recyclerView3 = root.findViewById<RecyclerView>(R.id.recipesRecyclerView3Search).apply {
+//            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+//            adapter = recipeAdapter3
+//        }
 
         homeViewModel.popularRecipes.observe(this, Observer {
             recipeAdapter1.setItems(it)
@@ -98,13 +98,13 @@ class HomeFragment : Fragment() {
 
         })
 
-        homeViewModel.popularRecipes.observe(this, Observer {
-            recipeAdapter3.setItems(it)
-            //recipeAdapter.notifyDataSetChanged()
-
-            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter3.itemCount}")
-
-        })
+//        homeViewModel.popularRecipes.observe(this, Observer {
+//            recipeAdapter3.setItems(it)
+//            //recipeAdapter.notifyDataSetChanged()
+//
+//            Log.d("HOMEFRAGMENTTEST", "RECIPE ADAPTER ITEMS COUNT: ${recipeAdapter3.itemCount}")
+//
+//        })
 
         homeViewModel.user.observe(this, Observer {
             if(it.type == "chef") {

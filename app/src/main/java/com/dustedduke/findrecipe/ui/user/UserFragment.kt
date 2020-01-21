@@ -88,8 +88,8 @@ class UserFragment : Fragment() {
         var userName = root.findViewById<TextView>(R.id.userName)
         var logoutButton = root.findViewById<ImageButton>(R.id.userLogoutButton)
 
-        var favoritesCount = root.findViewById<TextView>(R.id.userFavoritesNumber)
-        var createdCount = root.findViewById<TextView>(R.id.userCreatedNumber)
+//        var favoritesCount = root.findViewById<TextView>(R.id.userFavoritesNumber)
+//        var createdCount = root.findViewById<TextView>(R.id.userCreatedNumber)
 
 
         fun createImageFile(): File {
@@ -235,7 +235,7 @@ class UserFragment : Fragment() {
             Log.d("USER FRAGMENT", "FAVORITES ADAPTER ITEMS COUNT: ${recipeAdapterFavorites.itemCount}")
 
             recipeAdapterFavorites.setItems(it)
-            favoritesCount.setText(it.size.toString())
+            //favoritesCount.setText(it.size.toString())
             //recipeAdapter.notifyDataSetChanged()
 
 
@@ -243,7 +243,7 @@ class UserFragment : Fragment() {
 
         userViewModel.createdRecipes.observe(this, Observer {
             recipeAdapterCreated.setItems(it)
-            createdCount.setText(it.size.toString())
+            //createdCount.setText(it.size.toString())
             //recipeAdapter.notifyDataSetChanged()
 
             Log.d("USER FRAGMENT", "CREATED ADAPTER ITEMS COUNT: ${recipeAdapterCreated.itemCount}")

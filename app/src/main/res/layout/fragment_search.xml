@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
-    android:paddingTop="10dp"
-    android:id="@+id/search_page">
+    android:layout_height="match_parent">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80sp"
+        android:layout_marginRight="15sp"
+        android:backgroundTint="@color/colorAccentOrange"
+        android:src="@drawable/ic_add_white_24dp"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_gravity="end|bottom"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,22 +26,103 @@
         <SearchView
             android:id="@+id/searchField"
             android:layout_width="match_parent"
-            android:layout_height="30sp"
-            android:paddingLeft="3sp"
-            android:paddingRight="3sp"></SearchView>
+            android:layout_height="40sp"
+            android:layout_marginLeft="17sp"
+            android:layout_marginRight="15sp"
+            android:paddingRight="10sp"
+            android:background="@drawable/bg_white_rounded"></SearchView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             />
 
-        <ProgressBar
-            android:id="@+id/searchProgressBar"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/SearchHeader1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="24dp"
+                android:text="Popular"
+                android:textSize="20dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recipesRecyclerView1Search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="0dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingLeft="24dp" />
+
+            <TextView
+                android:id="@+id/SearchHeader2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="24dp"
+                android:text="Recent"
+                android:textSize="20dp">
+
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recipesRecyclerView2Search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingLeft="24dp" />
+
+
+            <TextView
+                android:id="@+id/SearchHeader3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="24dp"
+                android:text="Monthly"
+                android:textSize="26dp">
+
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recipesRecyclerView3Search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingLeft="24dp" />
+
+
+
+
+
+        </LinearLayout>
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/searchProgressBar"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"/>-->
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
